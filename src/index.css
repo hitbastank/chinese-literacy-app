@@ -1,0 +1,1024 @@
+/* ========================================
+   识字冒险 - Minecraft 像素风格主题
+   ======================================== */
+
+/* Google Fonts - ZCOOL KuaiLe for interactive UI, Noto Sans SC for content */
+@import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+
+/* ========================================
+   CSS Variables - Minecraft Color Palette
+   ======================================== */
+:root {
+    /* Primary Colors - Yellow theme */
+    --mc-primary: #F2C94C;
+    --mc-primary-dark: #D4A93A;
+    --mc-primary-light: #FFE082;
+
+    /* Secondary Colors - Purple theme */
+    --mc-secondary: #9B59B6;
+    --mc-secondary-dark: #7D3C98;
+    --mc-secondary-light: #BB8FCE;
+
+    /* Tertiary Colors - Gray */
+    --mc-tertiary: #7F7F7F;
+    --mc-tertiary-dark: #5F5F5F;
+    --mc-tertiary-light: #A0A0A0;
+
+    /* Grass Green for navbar */
+    --mc-grass-green: #5D8731;
+    --mc-grass-dark: #4A6C27;
+    --mc-grass-light: #7CB342;
+
+    /* Dirt Brown for background */
+    --mc-dirt-brown: #8B5A2B;
+    --mc-dirt-dark: #6B4423;
+    --mc-dirt-light: #A0694F;
+
+    /* Wood Brown */
+    --mc-wood-brown: #9C6B30;
+    --mc-wood-dark: #7A5325;
+
+    /* Stone Colors */
+    --mc-stone-gray: #7F7F7F;
+    --mc-stone-dark: #5F5F5F;
+    --mc-cobble-gray: #6B6B6B;
+
+    /* Special Colors */
+    --mc-diamond: #0DC2D6;
+    --mc-gold: #FCEE4B;
+    --mc-redstone: #AA0F01;
+    --mc-emerald: #17DD62;
+    --mc-lapis: #345EC3;
+
+    /* UI Colors */
+    --mc-text-light: #FFFFFF;
+    --mc-text-dark: #3F3F3F;
+    --mc-text-shadow: #3F3F3F;
+    --mc-border: #1A1A1A;
+
+    /* Pixel Border Size */
+    --pixel-size: 4px;
+
+    /* Font Families */
+    --font-ui: 'ZCOOL KuaiLe', cursive;
+    /* Interactive UI elements */
+    --font-chinese: 'Noto Sans SC', sans-serif;
+    /* Cards and titles */
+
+    /* Spacing */
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-xxl: 48px;
+
+    /* Max content width for centering */
+    --max-content-width: 1200px;
+}
+
+/* ========================================
+   Reset & Base Styles
+   ======================================== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+}
+
+/* Dirt texture background pattern */
+body {
+    font-family: var(--font-chinese);
+    background-color: var(--mc-dirt-brown);
+    background-image:
+        /* Pixel grid overlay */
+        linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+        /* Noise texture simulation */
+        radial-gradient(ellipse at 20% 30%, var(--mc-dirt-light) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, var(--mc-dirt-dark) 0%, transparent 50%),
+        radial-gradient(ellipse at 40% 80%, rgba(107, 68, 35, 0.5) 0%, transparent 40%),
+        radial-gradient(ellipse at 60% 20%, rgba(160, 105, 79, 0.5) 0%, transparent 40%),
+        /* Stone/gravel spots */
+        radial-gradient(circle at 15% 45%, #6B6B6B 0%, transparent 3%),
+        radial-gradient(circle at 85% 55%, #7F7F7F 0%, transparent 2%),
+        radial-gradient(circle at 45% 90%, #5F5F5F 0%, transparent 3%),
+        radial-gradient(circle at 70% 15%, #6B6B6B 0%, transparent 2%);
+    background-size:
+        16px 16px,
+        16px 16px,
+        100% 100%,
+        100% 100%,
+        100% 100%,
+        100% 100%,
+        100% 100%,
+        100% 100%,
+        100% 100%,
+        100% 100%;
+    min-height: 100vh;
+    color: var(--mc-text-dark);
+    overflow-x: hidden;
+}
+
+/* ========================================
+   Pixel Border Utility (Minecraft style)
+   ======================================== */
+.pixel-border {
+    position: relative;
+    background: var(--mc-stone-gray);
+    border: var(--pixel-size) solid var(--mc-border);
+    box-shadow:
+        inset calc(var(--pixel-size) * -1) calc(var(--pixel-size) * -1) 0 var(--mc-stone-dark),
+        inset var(--pixel-size) var(--pixel-size) 0 rgba(255, 255, 255, 0.3);
+}
+
+.pixel-border-wood {
+    background: var(--mc-wood-brown);
+    border: var(--pixel-size) solid var(--mc-border);
+    box-shadow:
+        inset calc(var(--pixel-size) * -1) calc(var(--pixel-size) * -1) 0 var(--mc-wood-dark),
+        inset var(--pixel-size) var(--pixel-size) 0 rgba(255, 255, 255, 0.2);
+}
+
+.pixel-border-grass {
+    background: var(--mc-grass-green);
+    border: var(--pixel-size) solid var(--mc-border);
+    box-shadow:
+        inset calc(var(--pixel-size) * -1) calc(var(--pixel-size) * -1) 0 var(--mc-grass-dark),
+        inset var(--pixel-size) var(--pixel-size) 0 rgba(255, 255, 255, 0.2);
+}
+
+/* ========================================
+   Typography
+   ======================================== */
+.ui-text {
+    font-family: var(--font-ui);
+    text-shadow: 2px 2px 0 var(--mc-text-shadow);
+}
+
+.chinese-text {
+    font-family: var(--font-chinese);
+    font-weight: 700;
+}
+
+.chinese-text-large {
+    font-family: var(--font-chinese);
+    font-weight: 900;
+    font-size: 5rem;
+    line-height: 1.2;
+}
+
+/* Titles use Noto Sans */
+h1,
+h2,
+h3 {
+    font-family: var(--font-chinese);
+    font-weight: 900;
+    color: var(--mc-text-light);
+    text-shadow: 3px 3px 0 var(--mc-text-shadow);
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+h2 {
+    font-size: 1.8rem;
+}
+
+h3 {
+    font-size: 1.4rem;
+}
+
+/* ========================================
+   Pixel Texture Pattern (for buttons)
+   ======================================== */
+.pixel-texture {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+    background-size: 4px 4px;
+}
+
+/* ========================================
+   Buttons - Minecraft Style with ZCOOL Font
+   ======================================== */
+.mc-button {
+    font-family: var(--font-ui);
+    font-size: 1.1rem;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background-color: var(--mc-tertiary);
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+    background-size: 4px 4px;
+    color: var(--mc-text-light);
+    border: var(--pixel-size) solid var(--mc-border);
+    cursor: pointer;
+    text-shadow: 2px 2px 0 var(--mc-text-shadow);
+    box-shadow:
+        inset -4px -4px 0 var(--mc-tertiary-dark),
+        inset 4px 4px 0 rgba(255, 255, 255, 0.3);
+    transition: all 0.1s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.mc-button:hover {
+    background-color: var(--mc-tertiary-dark);
+    transform: scale(1.02);
+}
+
+.mc-button:active {
+    box-shadow:
+        inset 4px 4px 0 var(--mc-tertiary-dark),
+        inset -4px -4px 0 rgba(255, 255, 255, 0.3);
+    transform: scale(0.98);
+}
+
+/* Primary Button - Yellow */
+.mc-button-primary {
+    background-color: var(--mc-primary);
+    color: var(--mc-text-dark);
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+    box-shadow:
+        inset -4px -4px 0 var(--mc-primary-dark),
+        inset 4px 4px 0 rgba(255, 255, 255, 0.5);
+}
+
+.mc-button-primary:hover {
+    background-color: var(--mc-primary-light);
+}
+
+.mc-button-primary:active {
+    box-shadow:
+        inset 4px 4px 0 var(--mc-primary-dark),
+        inset -4px -4px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Secondary Button - Purple */
+.mc-button-secondary {
+    background-color: var(--mc-secondary);
+    box-shadow:
+        inset -4px -4px 0 var(--mc-secondary-dark),
+        inset 4px 4px 0 rgba(255, 255, 255, 0.3);
+}
+
+.mc-button-secondary:hover {
+    background-color: var(--mc-secondary-light);
+}
+
+.mc-button-secondary:active {
+    box-shadow:
+        inset 4px 4px 0 var(--mc-secondary-dark),
+        inset -4px -4px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Legacy gold button (now maps to primary) */
+.mc-button-gold {
+    background-color: var(--mc-primary);
+    color: var(--mc-text-dark);
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+    box-shadow:
+        inset -4px -4px 0 var(--mc-primary-dark),
+        inset 4px 4px 0 rgba(255, 255, 255, 0.5);
+}
+
+.mc-button-danger {
+    background-color: var(--mc-redstone);
+    box-shadow:
+        inset -4px -4px 0 #880C01,
+        inset 4px 4px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* ========================================
+   Cards - Minecraft Inventory Style
+   ======================================== */
+.mc-card {
+    background: #C6C6C6;
+    border: var(--pixel-size) solid var(--mc-border);
+    padding: var(--spacing-lg);
+    box-shadow:
+        inset -4px -4px 0 #8B8B8B,
+        inset 4px 4px 0 #FFFFFF;
+}
+
+.mc-card-dark {
+    background: #373737;
+    box-shadow:
+        inset -4px -4px 0 #1F1F1F,
+        inset 4px 4px 0 #4F4F4F;
+    color: var(--mc-text-light);
+}
+
+/* ========================================
+   Flash Card - Character Display
+   ======================================== */
+.flash-card {
+    width: 320px;
+    height: 400px;
+    background: linear-gradient(180deg, #F5E6D3 0%, #E8D5C0 100%);
+    border: 6px solid var(--mc-wood-brown);
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    box-shadow:
+        inset -6px -6px 0 #7A5325,
+        inset 6px 6px 0 rgba(255, 255, 255, 0.4),
+        8px 8px 0 rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+}
+
+.flash-card::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    border: 3px solid var(--mc-wood-dark);
+    pointer-events: none;
+}
+
+.flash-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        inset -6px -6px 0 #7A5325,
+        inset 6px 6px 0 rgba(255, 255, 255, 0.4),
+        12px 12px 0 rgba(0, 0, 0, 0.3);
+}
+
+.flash-card:active {
+    transform: translateY(2px);
+    box-shadow:
+        inset 6px 6px 0 #7A5325,
+        inset -6px -6px 0 rgba(255, 255, 255, 0.4),
+        4px 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+.flash-card-character {
+    font-family: var(--font-chinese);
+    font-size: 8rem;
+    font-weight: 900;
+    color: var(--mc-text-dark);
+    text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+    line-height: 1;
+}
+
+.flash-card-pinyin {
+    font-family: var(--font-chinese);
+    font-size: 2rem;
+    color: var(--mc-grass-green);
+    font-weight: 700;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+.flash-card-pinyin.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.flash-card-hint {
+    font-family: var(--font-ui);
+    font-size: 0.6rem;
+    color: var(--mc-stone-gray);
+    position: absolute;
+    bottom: 16px;
+}
+
+/* ========================================
+   Navigation Bar - Green Pixel Texture
+   ======================================== */
+.navbar {
+    background-color: var(--mc-grass-green);
+    background-image:
+        /* Pixel grid pattern */
+        linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+        /* Grass texture variation */
+        linear-gradient(45deg, var(--mc-grass-dark) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--mc-grass-dark) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--mc-grass-light) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--mc-grass-light) 75%);
+    background-size:
+        8px 8px,
+        8px 8px,
+        16px 16px,
+        16px 16px,
+        16px 16px,
+        16px 16px;
+    background-position:
+        0 0,
+        0 0,
+        0 0,
+        8px 0,
+        8px -8px,
+        0 8px;
+    border-bottom: var(--pixel-size) solid var(--mc-border);
+    padding: var(--spacing-md) var(--spacing-xl);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow:
+        inset 0 -6px 0 var(--mc-grass-dark),
+        inset 0 6px 0 rgba(255, 255, 255, 0.15);
+}
+
+.navbar-container {
+    width: 100%;
+    max-width: var(--max-content-width);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.navbar-logo h1 {
+    font-size: 1.5rem;
+    color: var(--mc-primary);
+    text-shadow: 2px 2px 0 var(--mc-text-shadow);
+}
+
+.navbar-nav {
+    display: flex;
+    gap: var(--spacing-sm);
+    list-style: none;
+}
+
+.navbar-link {
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    color: var(--mc-text-light);
+    text-decoration: none;
+    padding: var(--spacing-xs) var(--spacing-md);
+    background-color: var(--mc-tertiary);
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+    background-size: 4px 4px;
+    border: 3px solid var(--mc-border);
+    text-shadow: 1px 1px 0 var(--mc-text-shadow);
+    box-shadow:
+        inset -3px -3px 0 var(--mc-tertiary-dark),
+        inset 3px 3px 0 rgba(255, 255, 255, 0.3);
+    transition: all 0.1s ease;
+}
+
+.navbar-link:hover,
+.navbar-link.active {
+    background-color: var(--mc-primary);
+    color: var(--mc-text-dark);
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3);
+    box-shadow:
+        inset -3px -3px 0 var(--mc-primary-dark),
+        inset 3px 3px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* ========================================
+   Progress Bar - XP Style
+   ======================================== */
+.progress-container {
+    background: var(--mc-stone-dark);
+    border: var(--pixel-size) solid var(--mc-border);
+    padding: 4px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.progress-bar {
+    height: 24px;
+    background: var(--mc-emerald);
+    box-shadow:
+        inset 0 -4px 0 #12B050,
+        inset 0 4px 0 rgba(255, 255, 255, 0.3);
+    transition: width 0.5s ease;
+    position: relative;
+}
+
+.progress-bar::after {
+    content: attr(data-progress);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-ui);
+    font-size: 0.6rem;
+    color: var(--mc-text-light);
+    text-shadow: 1px 1px 0 var(--mc-text-shadow);
+}
+
+/* ========================================
+   Game Board
+   ======================================== */
+.game-board {
+    background: var(--mc-dirt-brown);
+    border: 6px solid var(--mc-border);
+    padding: var(--spacing-xl);
+    box-shadow:
+        inset -8px -8px 0 var(--mc-dirt-dark),
+        inset 8px 8px 0 rgba(255, 255, 255, 0.1),
+        12px 12px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================
+   Quiz Options
+   ======================================== */
+.quiz-option {
+    font-family: var(--font-chinese);
+    font-size: 1.5rem;
+    font-weight: 700;
+    padding: var(--spacing-md) var(--spacing-xl);
+    background: #C6C6C6;
+    border: var(--pixel-size) solid var(--mc-border);
+    cursor: pointer;
+    min-width: 150px;
+    text-align: center;
+    box-shadow:
+        inset -4px -4px 0 #8B8B8B,
+        inset 4px 4px 0 #FFFFFF;
+    transition: all 0.15s ease;
+}
+
+.quiz-option:hover {
+    background: #D8D8D8;
+    transform: scale(1.05);
+}
+
+.quiz-option:active {
+    box-shadow:
+        inset 4px 4px 0 #8B8B8B,
+        inset -4px -4px 0 #FFFFFF;
+    transform: scale(0.98);
+}
+
+.quiz-option.correct {
+    background: var(--mc-emerald);
+    animation: correctPulse 0.5s ease;
+}
+
+.quiz-option.wrong {
+    background: var(--mc-redstone);
+    color: var(--mc-text-light);
+    animation: wrongShake 0.5s ease;
+}
+
+@keyframes correctPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes wrongShake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20%,
+    60% {
+        transform: translateX(-10px);
+    }
+
+    40%,
+    80% {
+        transform: translateX(10px);
+    }
+}
+
+/* ========================================
+   Matching Game
+   ======================================== */
+.matching-item {
+    padding: var(--spacing-md);
+    background: var(--mc-wood-brown);
+    border: var(--pixel-size) solid var(--mc-border);
+    cursor: grab;
+    box-shadow:
+        inset -4px -4px 0 var(--mc-wood-dark),
+        inset 4px 4px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease;
+}
+
+.matching-item:active {
+    cursor: grabbing;
+}
+
+.matching-item.selected {
+    background: var(--mc-diamond);
+    box-shadow:
+        0 0 0 4px var(--mc-diamond),
+        inset -4px -4px 0 #0AA3B3,
+        inset 4px 4px 0 rgba(255, 255, 255, 0.3);
+}
+
+.matching-item.matched {
+    background: var(--mc-emerald);
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* ========================================
+   Achievement Badge
+   ======================================== */
+.achievement-badge {
+    width: 80px;
+    height: 80px;
+    background: var(--mc-gold);
+    border: var(--pixel-size) solid var(--mc-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    box-shadow:
+        inset -4px -4px 0 #D4C43E,
+        inset 4px 4px 0 rgba(255, 255, 255, 0.5);
+}
+
+.achievement-badge.locked {
+    background: var(--mc-stone-gray);
+    opacity: 0.5;
+    box-shadow:
+        inset -4px -4px 0 var(--mc-stone-dark),
+        inset 4px 4px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* ========================================
+   Stroke Animation Container
+   ======================================== */
+.stroke-container {
+    background: #FFFFFF;
+    border: 6px solid var(--mc-wood-brown);
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        inset -6px -6px 0 #7A5325,
+        inset 6px 6px 0 rgba(255, 255, 255, 0.4),
+        8px 8px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================
+   Page Layouts - Centered Content
+   ======================================== */
+.page-container {
+    min-height: calc(100vh - 80px);
+    padding: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.page-title {
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+}
+
+.page-content {
+    width: 100%;
+    max-width: var(--max-content-width);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xl);
+}
+
+/* ========================================
+   Home Page Hero
+   ======================================== */
+.hero {
+    text-align: center;
+    padding: var(--spacing-xxl) var(--spacing-xl);
+}
+
+.hero-title {
+    font-size: 2rem;
+    color: var(--mc-gold);
+    margin-bottom: var(--spacing-lg);
+    text-shadow: 4px 4px 0 var(--mc-text-shadow);
+}
+
+.hero-subtitle {
+    font-family: var(--font-chinese);
+    font-size: 1.2rem;
+    color: var(--mc-text-dark);
+    margin-bottom: var(--spacing-xl);
+}
+
+.hero-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ========================================
+   Stats Display
+   ======================================== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-md);
+    width: 100%;
+    max-width: 600px;
+}
+
+.stat-card {
+    background: var(--mc-wood-brown);
+    border: var(--pixel-size) solid var(--mc-border);
+    padding: var(--spacing-lg);
+    text-align: center;
+    box-shadow:
+        inset -4px -4px 0 var(--mc-wood-dark),
+        inset 4px 4px 0 rgba(255, 255, 255, 0.2);
+}
+
+.stat-value {
+    font-family: var(--font-ui);
+    font-size: 2rem;
+    color: var(--mc-gold);
+    text-shadow: 2px 2px 0 var(--mc-text-shadow);
+}
+
+.stat-label {
+    font-family: var(--font-ui);
+    font-size: 0.6rem;
+    color: var(--mc-text-light);
+    margin-top: var(--spacing-xs);
+    text-shadow: 1px 1px 0 var(--mc-text-shadow);
+}
+
+/* ========================================
+   Character Grid
+   ======================================== */
+.character-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: var(--spacing-sm);
+    width: 100%;
+    max-width: 800px;
+}
+
+.character-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-chinese);
+    font-size: 2rem;
+    font-weight: 700;
+    background: #C6C6C6;
+    border: 3px solid var(--mc-border);
+    cursor: pointer;
+    box-shadow:
+        inset -3px -3px 0 #8B8B8B,
+        inset 3px 3px 0 #FFFFFF;
+    transition: all 0.15s ease;
+}
+
+.character-cell:hover {
+    transform: scale(1.1);
+    z-index: 1;
+}
+
+.character-cell.learned {
+    background: var(--mc-emerald);
+    color: var(--mc-text-light);
+}
+
+.character-cell.in-progress {
+    background: var(--mc-gold);
+}
+
+/* ========================================
+   Category Tabs
+   ======================================== */
+.category-tabs {
+    display: flex;
+    gap: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.category-tab {
+    font-family: var(--font-ui);
+    font-size: 0.6rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--mc-stone-gray);
+    border: 3px solid var(--mc-border);
+    border-right: none;
+    cursor: pointer;
+    color: var(--mc-text-light);
+    text-shadow: 1px 1px 0 var(--mc-text-shadow);
+    box-shadow:
+        inset -3px -3px 0 var(--mc-stone-dark),
+        inset 3px 3px 0 rgba(255, 255, 255, 0.3);
+    transition: all 0.1s ease;
+}
+
+.category-tab:last-child {
+    border-right: 3px solid var(--mc-border);
+}
+
+.category-tab:hover,
+.category-tab.active {
+    background: var(--mc-grass-green);
+    box-shadow:
+        inset -3px -3px 0 var(--mc-grass-dark),
+        inset 3px 3px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* ========================================
+   Modal
+   ======================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-content {
+    background: #C6C6C6;
+    border: 6px solid var(--mc-border);
+    padding: var(--spacing-xl);
+    max-width: 500px;
+    width: 90%;
+    box-shadow:
+        inset -6px -6px 0 #8B8B8B,
+        inset 6px 6px 0 #FFFFFF,
+        16px 16px 0 rgba(0, 0, 0, 0.5);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================
+   Utility Classes
+   ======================================== */
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.gap-sm {
+    gap: var(--spacing-sm);
+}
+
+.gap-md {
+    gap: var(--spacing-md);
+}
+
+.gap-lg {
+    gap: var(--spacing-lg);
+}
+
+.mt-sm {
+    margin-top: var(--spacing-sm);
+}
+
+.mt-md {
+    margin-top: var(--spacing-md);
+}
+
+.mt-lg {
+    margin-top: var(--spacing-lg);
+}
+
+.mb-sm {
+    margin-bottom: var(--spacing-sm);
+}
+
+.mb-md {
+    margin-bottom: var(--spacing-md);
+}
+
+.mb-lg {
+    margin-bottom: var(--spacing-lg);
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+@media (max-width: 768px) {
+    :root {
+        --pixel-size: 3px;
+    }
+
+    h1 {
+        font-size: 1.2rem;
+    }
+
+    h2 {
+        font-size: 1rem;
+    }
+
+    h3 {
+        font-size: 0.875rem;
+    }
+
+    .flash-card {
+        width: 280px;
+        height: 350px;
+    }
+
+    .flash-card-character {
+        font-size: 6rem;
+    }
+
+    .navbar {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-sm);
+    }
+
+    .navbar-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .hero-title {
+        font-size: 1.5rem;
+    }
+
+    .mc-button {
+        font-size: 0.75rem;
+        padding: var(--spacing-xs) var(--spacing-md);
+    }
+}
+
+@media (max-width: 480px) {
+    .flash-card {
+        width: 240px;
+        height: 300px;
+    }
+
+    .flash-card-character {
+        font-size: 5rem;
+    }
+
+    .stroke-container {
+        width: 250px;
+        height: 250px;
+    }
+}

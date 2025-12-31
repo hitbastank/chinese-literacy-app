@@ -1,0 +1,12 @@
+/* Progress Page Styles */
+
+.progress-page {
+    gap: var(--spacing-lg);
+}
+
+.page-subtitle {
+    font-family: var(--font-chinese);
+    font-size: 1rem;
+    color: var(--mc-text-dark);
+    margin-top: var(--spacing-xs);
+}

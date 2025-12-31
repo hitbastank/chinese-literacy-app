@@ -1,0 +1,294 @@
+/* FlashCard Component Styles */
+
+.flash-card-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.flash-card {
+    width: 320px;
+    height: 420px;
+    background: linear-gradient(180deg, #F5E6D3 0%, #E8D5C0 100%);
+    border: 6px solid var(--mc-wood-brown);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    box-shadow:
+        inset -6px -6px 0 #7A5325,
+        inset 6px 6px 0 rgba(255, 255, 255, 0.4),
+        8px 8px 0 rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    user-select: none;
+}
+
+.flash-card::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border: 3px solid var(--mc-wood-dark);
+    pointer-events: none;
+}
+
+.flash-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        inset -6px -6px 0 #7A5325,
+        inset 6px 6px 0 rgba(255, 255, 255, 0.4),
+        12px 12px 0 rgba(0, 0, 0, 0.3);
+}
+
+.flash-card:active {
+    transform: translateY(2px);
+    box-shadow:
+        inset 6px 6px 0 #7A5325,
+        inset -6px -6px 0 rgba(255, 255, 255, 0.4),
+        4px 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+.flash-card.playing {
+    animation: cardPulse 0.5s ease infinite;
+}
+
+@keyframes cardPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+.flash-card-character {
+    font-family: var(--font-chinese);
+    font-size: 7rem;
+    font-weight: 900;
+    color: var(--mc-text-dark);
+    text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+    line-height: 1;
+    transition: transform 0.3s ease;
+}
+
+.flash-card:hover .flash-card-character {
+    transform: scale(1.05);
+}
+
+.flash-card-pinyin {
+    font-family: var(--font-chinese);
+    font-size: 2rem;
+    color: var(--mc-grass-green);
+    font-weight: 700;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.flash-card-pinyin.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.flash-card-hint {
+    font-family: var(--font-ui);
+    font-size: 0.55rem;
+    color: var(--mc-stone-gray);
+    position: absolute;
+    bottom: 20px;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.5px;
+}
+
+.flash-card-words {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: var(--spacing-xs);
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
+    animation-delay: 0.2s;
+}
+
+.flash-card-word {
+    font-family: var(--font-chinese);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--mc-dirt-brown);
+    background: rgba(255, 255, 255, 0.5);
+    padding: 4px 12px;
+    border: 2px solid var(--mc-wood-dark);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Playing indicator */
+.flash-card-playing-indicator {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 4px;
+    align-items: flex-end;
+    height: 20px;
+}
+
+.flash-card-playing-indicator span {
+    width: 4px;
+    background: var(--mc-grass-green);
+    animation: soundWave 0.5s ease-in-out infinite;
+}
+
+.flash-card-playing-indicator span:nth-child(1) {
+    height: 8px;
+    animation-delay: 0s;
+}
+
+.flash-card-playing-indicator span:nth-child(2) {
+    height: 16px;
+    animation-delay: 0.1s;
+}
+
+.flash-card-playing-indicator span:nth-child(3) {
+    height: 12px;
+    animation-delay: 0.2s;
+}
+
+@keyframes soundWave {
+
+    0%,
+    100% {
+        transform: scaleY(1);
+    }
+
+    50% {
+        transform: scaleY(0.5);
+    }
+}
+
+/* Controls */
+.flash-card-controls {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.flash-card-controls .mc-button {
+    min-width: 100px;
+    font-size: 0.65rem;
+}
+
+/* Info section */
+.flash-card-info {
+    background: var(--mc-wood-brown);
+    border: 4px solid var(--mc-border);
+    padding: var(--spacing-md);
+    max-width: 320px;
+    box-shadow:
+        inset -4px -4px 0 var(--mc-wood-dark),
+        inset 4px 4px 0 rgba(255, 255, 255, 0.2);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.flash-card-meaning,
+.flash-card-sentence {
+    font-family: var(--font-chinese);
+    font-size: 1rem;
+    color: var(--mc-text-light);
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.5;
+}
+
+.flash-card-meaning .label,
+.flash-card-sentence .label {
+    font-family: var(--font-ui);
+    font-size: 0.6rem;
+    color: var(--mc-gold);
+    margin-right: var(--spacing-xs);
+}
+
+/* Empty state */
+.flash-card-empty {
+    background: var(--mc-stone-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flash-card-empty-text {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    color: var(--mc-text-light);
+    text-shadow: 2px 2px 0 var(--mc-text-shadow);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .flash-card {
+        width: 280px;
+        height: 360px;
+    }
+
+    .flash-card-character {
+        font-size: 5.5rem;
+    }
+
+    .flash-card-pinyin {
+        font-size: 1.6rem;
+    }
+
+    .flash-card-controls {
+        gap: var(--spacing-sm);
+    }
+
+    .flash-card-controls .mc-button {
+        min-width: 80px;
+        font-size: 0.55rem;
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+}
+
+@media (max-width: 480px) {
+    .flash-card {
+        width: 250px;
+        height: 320px;
+    }
+
+    .flash-card-character {
+        font-size: 4.5rem;
+    }
+}

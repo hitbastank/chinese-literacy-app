@@ -1,0 +1,92 @@
+/* Games Page Styles */
+
+.games-page {
+    gap: var(--spacing-lg);
+}
+
+.page-subtitle {
+    font-family: var(--font-chinese);
+    font-size: 1rem;
+    color: var(--mc-text-dark);
+    margin-top: var(--spacing-xs);
+}
+
+/* Game Type Selector */
+.game-type-selector {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.game-type-selector .mc-button {
+    font-size: 0.65rem;
+}
+
+/* Game Area */
+.game-area {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Game Instructions */
+.game-instructions {
+    background: var(--mc-wood-brown);
+    border: 4px solid var(--mc-border);
+    padding: var(--spacing-lg);
+    max-width: 500px;
+    box-shadow:
+        inset -4px -4px 0 var(--mc-wood-dark),
+        inset 4px 4px 0 rgba(255, 255, 255, 0.2);
+}
+
+.game-instructions h3 {
+    font-size: 0.7rem;
+    color: var(--mc-gold);
+    margin-bottom: var(--spacing-md);
+}
+
+.game-instructions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.game-instructions li {
+    font-family: var(--font-chinese);
+    font-size: 0.9rem;
+    color: var(--mc-text-light);
+    padding: var(--spacing-xs) 0;
+    padding-left: var(--spacing-md);
+    position: relative;
+}
+
+.game-instructions li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--mc-grass-green);
+}
+
+/* Game Actions */
+.game-actions {
+    display: flex;
+    justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .game-type-selector {
+        gap: var(--spacing-xs);
+    }
+
+    .game-type-selector .mc-button {
+        font-size: 0.55rem;
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+
+    .game-instructions {
+        padding: var(--spacing-md);
+    }
+}

@@ -1,0 +1,140 @@
+import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import QuizGame from '../components/QuizGame';
+import MatchingGame from '../components/MatchingGame';
+import characters, { getRandomCharacters } from '../data/characters';
+import { markAsLearned, checkAndUnlockAchievements, unlockAchievement, ACHIEVEMENTS } from '../utils/storage';
+import './Games.css';
+
+/**
+ * 游戏页面
+ */
+const Games = () => {
+    const [searchParams] = useSearchParams();
+    const defaultType = searchParams.get('type') || 'quiz';
+
+    const [gameType, setGameType] = useState(defaultType);
+    const [gameKey, setGameKey] = useState(0); // 用于强制重新渲染游戏
+    const [gameCharacters, setGameCharacters] = useState(() =>
+        getRandomCharacters(20)
+    );
+
+    const handleGameComplete = (result) => {
+        console.log('Game completed:', result);
+
+        // 如果测试全对，解锁成就
+        if (result.score === result.total) {
+            unlockAchievement(ACHIEVEMENTS.PERFECT_QUIZ.id);
+        }
+
+        checkAndUnlockAchievements();
+    };
+
+    const handleCorrectAnswer = (char) => {
+        const globalIndex = characters.findIndex(c => c.char === char.char);
+        if (globalIndex !== -1) {
+            markAsLearned(globalIndex);
+        }
+    };
+
+    const startNewGame = (type) => {
+        setGameType(type);
+        setGameCharacters(getRandomCharacters(20));
+        setGameKey(prev => prev + 1);
+    };
+
+    return (
+        <div className="page-container games-page">
+            <div className="page-title">
+                <h1 className="pixel-text">🎮 趣味游戏</h1>
+                <p className="page-subtitle">边玩边学，轻松掌握汉字</p>
+            </div>
+
+            {/* 游戏类型选择 */}
+            <div className="game-type-selector">
+                <button
+                    className={`mc-button ${gameType === 'quiz' ? 'mc-button-primary' : ''}`}
+                    onClick={() => startNewGame('quiz')}
+                >
+                    ❓ 选择题
+                </button>
+                <button
+                    className={`mc-button ${gameType === 'matching' ? 'mc-button-primary' : ''}`}
+                    onClick={() => startNewGame('matching')}
+                >
+                    🔗 连线游戏
+                </button>
+                <button
+                    className={`mc-button ${gameType === 'matching-meaning' ? 'mc-button-primary' : ''}`}
+                    onClick={() => startNewGame('matching-meaning')}
+                >
+                    📖 汉字配释义
+                </button>
+            </div>
+
+            {/* 游戏区域 */}
+            <div className="game-area">
+                {gameType === 'quiz' && (
+                    <QuizGame
+                        key={`quiz-${gameKey}`}
+                        characters={gameCharacters}
+                        questionCount={10}
+                        onComplete={handleGameComplete}
+                        onCorrect={handleCorrectAnswer}
+                    />
+                )}
+
+                {gameType === 'matching' && (
+                    <MatchingGame
+                        key={`matching-${gameKey}`}
+                        characters={gameCharacters}
+                        pairCount={6}
+                        matchType="pinyin"
+                        onComplete={handleGameComplete}
+                    />
+                )}
+
+                {gameType === 'matching-meaning' && (
+                    <MatchingGame
+                        key={`matching-meaning-${gameKey}`}
+                        characters={gameCharacters}
+                        pairCount={6}
+                        matchType="meaning"
+                        onComplete={handleGameComplete}
+                    />
+                )}
+            </div>
+
+            {/* 游戏说明 */}
+            <div className="game-instructions">
+                <h3 className="pixel-text">游戏说明</h3>
+                {gameType === 'quiz' && (
+                    <ul>
+                        <li>根据拼音或释义选择正确的汉字</li>
+                        <li>可以点击"听发音"按钮听汉字的读音</li>
+                        <li>答对的汉字会自动标记为已学会</li>
+                    </ul>
+                )}
+                {(gameType === 'matching' || gameType === 'matching-meaning') && (
+                    <ul>
+                        <li>点击左边的汉字，再点击右边对应的{gameType === 'matching' ? '拼音' : '释义'}</li>
+                        <li>正确配对会变成绿色</li>
+                        <li>尽量用最少的尝试次数完成所有配对</li>
+                    </ul>
+                )}
+            </div>
+
+            {/* 重新开始按钮 */}
+            <div className="game-actions">
+                <button
+                    className="mc-button mc-button-gold"
+                    onClick={() => startNewGame(gameType)}
+                >
+                    🔄 换一批汉字
+                </button>
+            </div>
+        </div>
+    );
+};
+
+export default Games;
