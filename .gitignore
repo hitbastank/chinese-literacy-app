@@ -1,6 +1,9 @@
 # 依赖目录 - 不需要上传，可以通过 npm install 重新安装
 node_modules/
 
+# 参考资料 - 仅本地可见，不上传到 GitHub
+references/
+
 # 构建产物
 dist/
 
