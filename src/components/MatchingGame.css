@@ -58,7 +58,10 @@
         inset 4px 4px 0 rgba(255, 255, 255, 0.2);
     transition: all 0.2s ease;
     min-width: 100px;
-    text-align: center;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .matching-item:hover:not(.matched) {
@@ -76,10 +79,10 @@
 }
 
 .matching-item.matched {
-    background: var(--mc-emerald);
-    opacity: 0.8;
+    background: #6a5030;
+    border-color: #4a3020;
+    opacity: 0.9;
     pointer-events: none;
-    animation: matchPulse 0.3s ease;
 }
 
 .matching-item.wrong {
@@ -131,10 +134,44 @@
     text-shadow: 1px 1px 0 var(--mc-text-shadow);
 }
 
-/* Lines area (placeholder for visual connections) */
+/* Lines area - actual connecting lines */
 .matching-lines {
-    width: 40px;
+    width: 60px;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.matching-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--mc-gold), #ffd700, var(--mc-gold));
+    box-shadow: 0 0 8px var(--mc-gold);
+    transform-origin: left center;
+    animation: lineAppear 0.3s ease;
+}
+
+/* Calculate line position based on item indices */
+.matching-line {
+    --item-height: 72px;
+    /* 60px height + 12px gap */
+    top: calc(var(--left-pos) * var(--item-height) + 30px);
+    transform: rotate(calc((var(--right-pos) - var(--left-pos)) * 5deg));
+}
+
+@keyframes lineAppear {
+    from {
+        opacity: 0;
+        transform: scaleX(0);
+    }
+
+    to {
+        opacity: 1;
+        transform: scaleX(1);
+    }
 }
 
 /* Tip */

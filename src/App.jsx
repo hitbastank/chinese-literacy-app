@@ -4,6 +4,8 @@ import Home from './pages/Home';
 import Learn from './pages/Learn';
 import Games from './pages/Games';
 import Progress from './pages/Progress';
+import Curriculum from './pages/Curriculum';
+import Lesson from './pages/Lesson';
 
 /**
  * 识字冒险 - 中文识字学习应用
@@ -19,6 +21,8 @@ function App() {
                     <Route path="/learn" element={<Learn />} />
                     <Route path="/games" element={<Games />} />
                     <Route path="/progress" element={<Progress />} />
+                    <Route path="/curriculum" element={<Curriculum />} />
+                    <Route path="/lesson/:lessonId" element={<Lesson />} />
                 </Routes>
             </main>
         </div>

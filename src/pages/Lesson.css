@@ -1,0 +1,521 @@
+/* 课程学习页面样式 */
+
+.lesson-page {
+    padding-bottom: 120px;
+}
+
+/* 课程头部 */
+.lesson-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: var(--mc-stone);
+    border-bottom: 4px solid var(--mc-dark);
+    margin-bottom: 24px;
+}
+
+.back-link {
+    color: var(--mc-text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: var(--mc-grass);
+}
+
+/* 标题不用投影 */
+.lesson-title {
+    font-size: 1.3rem;
+    text-align: center;
+    text-shadow: none;
+}
+
+.lesson-progress {
+    background: var(--mc-dark);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+/* 主学习区域 */
+.lesson-main {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0 16px;
+    text-align: center;
+}
+
+/* 汉字卡片 - 田字格样式 */
+.lesson-card {
+    background: #ffffff;
+    /* 田字格 grid pattern - 虚线样式 */
+    background-image:
+        /* 水平中心虚线 */
+        repeating-linear-gradient(90deg,
+            transparent 0px,
+            transparent 8px,
+            rgba(200, 100, 100, 0.4) 8px,
+            rgba(200, 100, 100, 0.4) 16px),
+        /* 垂直中心虚线 */
+        repeating-linear-gradient(0deg,
+            transparent 0px,
+            transparent 8px,
+            rgba(200, 100, 100, 0.4) 8px,
+            rgba(200, 100, 100, 0.4) 16px);
+    background-size: 100% 1px, 1px 100%;
+    background-position: 0 50%, 50% 0;
+    background-repeat: no-repeat;
+    border: 8px solid #e54;
+    border-radius: 12px;
+    padding: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    aspect-ratio: 1 / 1;
+    max-width: 240px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.lesson-card:hover {
+    transform: scale(1.02);
+    border-color: #a33;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), inset 0 0 0 3px #a33;
+}
+
+.lesson-card.playing {
+    border-color: var(--mc-gold);
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.5), inset 0 0 0 3px var(--mc-gold);
+    animation: pulse-glow 1s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 193, 7, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 193, 7, 0.6);
+    }
+}
+
+.card-character {
+    font-size: 160px;
+    font-weight: bold;
+    color: #e54;
+    text-shadow: none;
+    margin: 0;
+    font-family: 'KaiTi', 'STKaiti', serif;
+    line-height: 1;
+    z-index: 1;
+    transition: color 0.3s ease;
+    transform: translateY(-8%);
+    /* Visual optical centering */
+}
+
+/* 汉字容器 - 用于叠加动画 */
+.card-character-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 200px;
+}
+
+/* 动画进行时隐藏原有汉字，只显示HanziWriter动画 */
+.card-character-wrapper.animating .card-character {
+    opacity: 0;
+}
+
+/* 笔画动画叠加层 - 覆盖在灰色字上 */
+.stroke-animation-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.stroke-animation-overlay svg {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.card-pinyin {
+    font-size: 24px;
+    color: #fff;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s;
+    font-family: sans-serif;
+    background: linear-gradient(135deg, #e54, #c44);
+    padding: 8px 24px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    display: inline-block;
+    box-shadow: 0 4px 12px rgba(229, 85, 68, 0.3);
+    min-height: 40px;
+    visibility: hidden;
+}
+
+.card-pinyin.visible {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+}
+
+.card-hint {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-top: 12px;
+    text-align: center;
+}
+
+/* 播放波浪动画 - 在卡片外部显示 */
+.playing-waves {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 20px auto 0;
+    padding: 12px 24px;
+    background: rgba(255, 193, 7, 0.15);
+    border-radius: 20px;
+}
+
+.playing-waves span {
+    width: 8px;
+    height: 24px;
+    background: var(--mc-gold);
+    border-radius: 4px;
+    animation: wave 0.6s ease-in-out infinite;
+}
+
+.playing-waves span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.playing-waves span:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.playing-waves span:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+@keyframes wave {
+
+    0%,
+    100% {
+        transform: scaleY(0.5);
+    }
+
+    50% {
+        transform: scaleY(1);
+    }
+}
+
+/* 汉字详情 */
+.char-details {
+    background: #666;
+    border: 4px solid #555;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 20px;
+}
+
+.detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #777;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.detail-label {
+    min-width: 70px;
+    padding: 4px 8px;
+    background: #555;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #ffd700;
+    text-align: center;
+    font-weight: 600;
+}
+
+.detail-content {
+    flex: 1;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #fff;
+}
+
+.words-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.word-tag {
+    background: #8bc34a;
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-size: 1rem;
+    color: #1b3d10;
+    border: 2px solid #689f38;
+    font-weight: 600;
+}
+
+.minecraft-sentence {
+    background: linear-gradient(135deg, #4a5d4a, #3d4f3d) !important;
+    border: 2px solid #5d8731;
+}
+
+.minecraft-sentence .detail-label {
+    background: #5d8731;
+    color: white;
+}
+
+.minecraft-sentence .detail-content {
+    color: #c8e6c9;
+}
+
+/* 第二次学习提示 */
+.second-study-notice {
+    background: rgba(255, 193, 7, 0.15);
+    border: 2px solid var(--mc-gold);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.study-count-badge {
+    background: var(--mc-gold);
+    color: #000;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    align-self: flex-start;
+}
+
+.needs-review-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--mc-text-secondary);
+}
+
+.needs-review-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--mc-gold);
+    cursor: pointer;
+}
+
+/* 已彻底学会标记 */
+.mastered-badge {
+    background: linear-gradient(135deg, #4CAF50, #8BC34A);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-top: 16px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+/* 字内导航按钮 */
+.char-nav-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.char-nav-buttons .mc-button {
+    min-width: 120px;
+}
+
+.char-nav-buttons .mc-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 快速跳转导航 */
+.quick-nav-section {
+    max-width: 600px;
+    margin: 40px auto 0;
+    padding: 0 16px;
+}
+
+.quick-nav-section h3 {
+    text-align: center;
+    margin-bottom: 16px;
+    color: #ccc;
+    text-shadow: none;
+}
+
+.quick-nav-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+.quick-nav-char {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--mc-stone);
+    border: 3px solid var(--mc-border);
+    border-radius: 8px;
+    font-size: 1.4rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.quick-nav-char:hover {
+    background: var(--mc-grass);
+    border-color: var(--mc-grass-dark);
+    transform: scale(1.1);
+}
+
+.quick-nav-char.active {
+    background: var(--mc-gold);
+    border-color: #e6a800;
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+    color: #000;
+    font-weight: bold;
+}
+
+/* 已学会的汉字 - 30%透明度 */
+.quick-nav-char.mastered {
+    opacity: 0.3;
+}
+
+.quick-nav-char.mastered:hover {
+    opacity: 0.7;
+}
+
+/* 已学会但当前选中的不受透明度影响 */
+.quick-nav-char.mastered.active {
+    opacity: 1;
+}
+
+/* 课程导航 */
+.lesson-nav-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 16px;
+    flex-wrap: wrap;
+}
+
+.lesson-nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 140px;
+}
+
+.nav-lesson-title {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+.lesson-nav-placeholder {
+    width: 140px;
+}
+
+/* 未找到课程 */
+.lesson-not-found {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.lesson-not-found h2 {
+    margin-bottom: 16px;
+}
+
+.lesson-not-found p {
+    color: var(--mc-text-secondary);
+    margin-bottom: 24px;
+}
+
+/* 响应式 */
+@media (max-width: 600px) {
+    .lesson-header {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .lesson-title {
+        order: 3;
+        width: 100%;
+        font-size: 1.1rem;
+    }
+
+    .card-character {
+        font-size: 80px;
+    }
+
+    .card-pinyin {
+        font-size: 24px;
+    }
+
+    .quick-nav-char {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .lesson-nav-section {
+        flex-direction: column;
+    }
+
+    .lesson-nav-btn {
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .lesson-nav-placeholder {
+        display: none;
+    }
+}

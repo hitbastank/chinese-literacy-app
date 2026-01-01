@@ -29,11 +29,11 @@ const Home = () => {
                 </p>
 
                 <div className="hero-buttons">
-                    <Link to="/learn" className="mc-button mc-button-primary">
-                        📖 开始学习
+                    <Link to="/curriculum" className="mc-button mc-button-primary">
+                        📚 课程学习
                     </Link>
                     <Link to="/games" className="mc-button mc-button-gold">
-                        🎮 趣味游戏
+                        🔄 复习
                     </Link>
                 </div>
             </section>
@@ -71,10 +71,10 @@ const Home = () => {
             <section className="home-section">
                 <h2 className="section-title pixel-text">🚀 学习模块</h2>
                 <div className="feature-grid">
-                    <Link to="/learn" className="feature-card">
-                        <div className="feature-icon">📖</div>
-                        <h3 className="feature-title">识字卡片</h3>
-                        <p className="feature-desc">看汉字，猜拼音，听发音</p>
+                    <Link to="/curriculum" className="feature-card highlight">
+                        <div className="feature-icon">📚</div>
+                        <h3 className="feature-title">课程学习</h3>
+                        <p className="feature-desc">分级课程，Minecraft主题</p>
                     </Link>
 
                     <Link to="/learn?mode=stroke" className="feature-card">

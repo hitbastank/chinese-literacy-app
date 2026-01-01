@@ -37,7 +37,7 @@ const Navbar = () => {
                         to="/games"
                         className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}
                     >
-                        🎮 游戏
+                        🔄 复习
                     </NavLink>
                 </li>
                 <li>

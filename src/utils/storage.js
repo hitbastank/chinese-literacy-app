@@ -1,5 +1,10 @@
 /**
  * 本地存储工具 - 学习进度追踪
+ * 
+ * 学习状态说明：
+ * - studied: 学过的字及学习次数 { char: count }
+ * - mastered: 彻底学会的字 [char, ...]
+ * - needsReview: 标记为不熟练的字 [char, ...]
  */
 
 const STORAGE_KEYS = {
@@ -14,17 +19,22 @@ const STORAGE_KEYS = {
 export const getProgress = () => {
     try {
         const data = localStorage.getItem(STORAGE_KEYS.PROGRESS);
-        return data ? JSON.parse(data) : {
-            learned: [],      // 已学会的汉字索引
-            inProgress: [],   // 正在学习的汉字索引
-            reviewNeeded: [], // 需要复习的汉字索引
-            totalStudyTime: 0, // 总学习时间（分钟）
-            streakDays: 0,    // 连续学习天数
+        const defaultProgress = {
+            learned: [],        // 兼容旧版：已学会的汉字索引
+            inProgress: [],     // 兼容旧版：正在学习的汉字索引
+            reviewNeeded: [],   // 兼容旧版：需要复习的汉字索引
+            // 新版字段
+            mastered: [],       // 彻底学会的字 (char string)
+            studied: {},        // 学过的字及次数 { char: count }
+            needsReview: [],    // 标记为不熟练的字 (char string)
+            totalStudyTime: 0,
+            streakDays: 0,
             lastStudyDate: null
         };
+        return data ? { ...defaultProgress, ...JSON.parse(data) } : defaultProgress;
     } catch (error) {
         console.error('获取进度失败:', error);
-        return { learned: [], inProgress: [], reviewNeeded: [], totalStudyTime: 0, streakDays: 0, lastStudyDate: null };
+        return { learned: [], inProgress: [], reviewNeeded: [], mastered: [], studied: {}, needsReview: [], totalStudyTime: 0, streakDays: 0, lastStudyDate: null };
     }
 };
 
@@ -79,15 +89,124 @@ export const removeFromReview = (charIndex) => {
     return progress;
 };
 
+// ========== 新版进度管理函数 ==========
+
+/**
+ * 记录学过的字（点击下一个时调用）
+ * @param {string} char - 汉字
+ * @returns {number} 该字的学习次数
+ */
+export const markAsStudied = (char) => {
+    const progress = getProgress();
+    const currentCount = progress.studied[char] || 0;
+    progress.studied[char] = currentCount + 1;
+
+    // 学习两次后自动标记为彻底学会（如果没有标记为不熟练）
+    if (progress.studied[char] >= 2 && !progress.needsReview.includes(char)) {
+        if (!progress.mastered.includes(char)) {
+            progress.mastered.push(char);
+        }
+    }
+
+    saveProgress(progress);
+    return progress.studied[char];
+};
+
+/**
+ * 标记为彻底学会（点击"已学会"按钮）
+ * @param {string} char - 汉字
+ */
+export const markAsMastered = (char) => {
+    const progress = getProgress();
+    if (!progress.mastered.includes(char)) {
+        progress.mastered.push(char);
+    }
+    // 从不熟练列表移除
+    progress.needsReview = progress.needsReview.filter(c => c !== char);
+    saveProgress(progress);
+    return progress;
+};
+
+/**
+ * 标记为不熟练（第二次学习时勾选checkbox）
+ * @param {string} char - 汉字
+ */
+export const markAsNeedsReviewNew = (char) => {
+    const progress = getProgress();
+    if (!progress.needsReview.includes(char)) {
+        progress.needsReview.push(char);
+    }
+    // 从彻底学会列表移除
+    progress.mastered = progress.mastered.filter(c => c !== char);
+    saveProgress(progress);
+    return progress;
+};
+
+/**
+ * 取消不熟练标记
+ * @param {string} char - 汉字
+ */
+export const unmarkNeedsReview = (char) => {
+    const progress = getProgress();
+    progress.needsReview = progress.needsReview.filter(c => c !== char);
+    saveProgress(progress);
+    return progress;
+};
+
+/**
+ * 获取学过但未彻底学会的字（用于隔课复习）
+ * @returns {string[]} 需要复习的字列表
+ */
+export const getCharsForReview = () => {
+    const progress = getProgress();
+    return Object.keys(progress.studied).filter(char =>
+        !progress.mastered.includes(char)
+    );
+};
+
+/**
+ * 获取某个字的学习次数
+ * @param {string} char - 汉字
+ * @returns {number} 学习次数
+ */
+export const getStudyCount = (char) => {
+    const progress = getProgress();
+    return progress.studied[char] || 0;
+};
+
+/**
+ * 检查字是否彻底学会
+ * @param {string} char - 汉字
+ * @returns {boolean}
+ */
+export const isMastered = (char) => {
+    const progress = getProgress();
+    return progress.mastered.includes(char);
+};
+
+/**
+ * 检查字是否标记为不熟练
+ * @param {string} char - 汉字
+ * @returns {boolean}
+ */
+export const isNeedsReview = (char) => {
+    const progress = getProgress();
+    return progress.needsReview.includes(char);
+};
+
 // 获取学习统计
 export const getStats = () => {
     const progress = getProgress();
     return {
-        learnedCount: progress.learned.length,
+        learnedCount: progress.mastered.length || progress.learned.length, // 优先使用新版
         inProgressCount: progress.inProgress.length,
-        reviewCount: progress.reviewNeeded.length,
+        reviewCount: progress.needsReview.length,
         totalStudyTime: progress.totalStudyTime,
-        streakDays: progress.streakDays
+        streakDays: progress.streakDays,
+        // 新增统计
+        masteredCount: progress.mastered.length,
+        studiedCount: Object.keys(progress.studied).length,
+        needsReviewCount: progress.needsReview.length
     };
 };
 
