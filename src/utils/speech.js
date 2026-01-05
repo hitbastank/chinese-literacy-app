@@ -1,6 +1,60 @@
 /**
- * 语音合成工具 - 使用 Web Speech API
+ * 语音合成工具
+ * 支持 Web Speech API 和 ChatTTS 本地服务
  */
+
+// ChatTTS 服务器配置
+const CHATTTS_SERVER = 'http://localhost:8765';
+let useChatTTS = false; // 默认使用 Web Speech API
+
+/**
+ * 检查 ChatTTS 服务是否可用
+ */
+export const checkChatTTSAvailable = async () => {
+    try {
+        const response = await fetch(`${CHATTTS_SERVER}/health`, {
+            method: 'GET',
+            timeout: 2000
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data.status === 'ok' && data.model_loaded;
+        }
+        return false;
+    } catch (error) {
+        return false;
+    }
+};
+
+/**
+ * 切换到 ChatTTS 模式
+ */
+export const enableChatTTS = async () => {
+    const available = await checkChatTTSAvailable();
+    if (available) {
+        useChatTTS = true;
+        console.log('✅ 已切换到 ChatTTS 语音');
+        return true;
+    } else {
+        console.log('⚠️ ChatTTS 服务不可用，保持使用 Web Speech API');
+        return false;
+    }
+};
+
+/**
+ * 切换回 Web Speech API
+ */
+export const disableChatTTS = () => {
+    useChatTTS = false;
+    console.log('已切换回 Web Speech API');
+};
+
+/**
+ * 获取当前使用的 TTS 引擎
+ */
+export const getCurrentTTSEngine = () => {
+    return useChatTTS ? 'ChatTTS' : 'Web Speech API';
+};
 
 // 检查浏览器是否支持语音合成
 export const isSpeechSupported = () => {
@@ -19,8 +73,52 @@ const getChineseVoice = () => {
     return zhVoice || voices[0];
 };
 
-// 朗读文本
-export const speak = (text, options = {}) => {
+/**
+ * 使用 ChatTTS 朗读文本
+ */
+const speakWithChatTTS = async (text, options = {}) => {
+    try {
+        const response = await fetch(`${CHATTTS_SERVER}/tts`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                text: text,
+                rate: options.rate || 0.8
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('ChatTTS 请求失败');
+        }
+
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+
+        return new Promise((resolve, reject) => {
+            audio.onended = () => {
+                URL.revokeObjectURL(audioUrl);
+                resolve();
+            };
+            audio.onerror = (e) => {
+                URL.revokeObjectURL(audioUrl);
+                reject(e);
+            };
+            audio.play();
+        });
+    } catch (error) {
+        console.error('ChatTTS 播放失败，回退到 Web Speech API:', error);
+        // 回退到 Web Speech API
+        return speakWithWebSpeech(text, options);
+    }
+};
+
+/**
+ * 使用 Web Speech API 朗读文本
+ */
+const speakWithWebSpeech = (text, options = {}) => {
     return new Promise((resolve, reject) => {
         if (!isSpeechSupported()) {
             reject(new Error('浏览器不支持语音合成'));
@@ -49,6 +147,17 @@ export const speak = (text, options = {}) => {
 
         window.speechSynthesis.speak(utterance);
     });
+};
+
+/**
+ * 朗读文本 - 自动选择 TTS 引擎
+ */
+export const speak = async (text, options = {}) => {
+    if (useChatTTS) {
+        return speakWithChatTTS(text, options);
+    } else {
+        return speakWithWebSpeech(text, options);
+    }
 };
 
 // 朗读单个汉字（带拼音）
@@ -83,7 +192,17 @@ export const speakSentence = async (sentence) => {
 };
 
 // 预加载语音（在页面加载时调用）
-export const preloadVoices = () => {
+export const preloadVoices = async () => {
+    // 尝试启用 ChatTTS
+    const chatTTSAvailable = await checkChatTTSAvailable();
+    if (chatTTSAvailable) {
+        useChatTTS = true;
+        console.log('🎤 ChatTTS 服务可用，已自动启用');
+    } else {
+        console.log('📢 使用 Web Speech API');
+    }
+
+    // 预加载 Web Speech API 语音列表
     if (isSpeechSupported()) {
         // 某些浏览器需要先获取一次语音列表
         window.speechSynthesis.getVoices();
@@ -97,4 +216,15 @@ export const preloadVoices = () => {
     }
 };
 
-export default { speak, speakCharacter, speakWord, speakSentence, isSpeechSupported, preloadVoices };
+export default {
+    speak,
+    speakCharacter,
+    speakWord,
+    speakSentence,
+    isSpeechSupported,
+    preloadVoices,
+    enableChatTTS,
+    disableChatTTS,
+    getCurrentTTSEngine,
+    checkChatTTSAvailable
+};

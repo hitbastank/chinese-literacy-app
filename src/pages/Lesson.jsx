@@ -29,6 +29,7 @@ const Lesson = () => {
     const [clickState, setClickState] = useState(0); // 0: 初始, 1: 显示拼音, 2: 可朗读
     const [isPlaying, setIsPlaying] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false); // 笔画动画状态
+    const [animationCompleted, setAnimationCompleted] = useState(false); // 动画完成状态
     const [studyCount, setStudyCount] = useState(0);
     const [charMastered, setCharMastered] = useState(false);
     const [needsReviewChecked, setNeedsReviewChecked] = useState(false);
@@ -43,17 +44,50 @@ const Lesson = () => {
         preloadVoices();
     }, []);
 
+    // 用于追踪当前字符的索引，防止动画在切换字符后仍然触发
+    const currentIndexRef = useRef(currentIndex);
+
+    // 动画会话ID - 每次切换字符时递增，用于取消旧的异步回调
+    const animationSessionRef = useRef(0);
+
+    // 用于追踪是否应该播放动画的同步ref（解决异步回调中state不同步的问题）
+    const shouldAnimateRef = useRef(false);
+
     // 切换字时重置状态并加载学习进度
     useEffect(() => {
+        // 更新当前索引的ref
+        currentIndexRef.current = currentIndex;
+
+        // 递增动画会话ID，使任何正在进行的异步回调失效
+        animationSessionRef.current += 1;
+
+        // 立即标记不应该播放动画，这会影响所有异步回调
+        shouldAnimateRef.current = false;
+
         setClickState(0);
         setIsAnimating(false);
-        // 清除之前的 HanziWriter 实例
+        setAnimationCompleted(false); // 重置动画完成状态，让原汉字立即显示
+
+        // 彻底清除之前的 HanziWriter 实例以及正在进行的动画
         if (hanziWriterRef.current) {
+            try {
+                // 尝试取消动画（如果正在进行）
+                hanziWriterRef.current.cancelQuiz?.();
+                hanziWriterRef.current.hideCharacter();
+                hanziWriterRef.current.hideOutline();
+                // 尝试取消当前动画
+                hanziWriterRef.current.cancelAnimation?.();
+            } catch (e) {
+                // 忽略错误
+            }
             hanziWriterRef.current = null;
         }
+
+        // 彻底清空容器，确保没有残留的SVG元素
         if (strokeContainerRef.current) {
             strokeContainerRef.current.innerHTML = '';
         }
+
         if (lesson && lesson.characters[currentIndex]) {
             const char = lesson.characters[currentIndex].char;
             setStudyCount(getStudyCount(char));
@@ -63,40 +97,145 @@ const Lesson = () => {
     }, [currentIndex, lesson]);
 
     // 初始化 HanziWriter - 在田字格内叠加笔画动画
+    // 增加一个额外的检查：只有当shouldAnimateRef.current为true时才播放动画
+    // 这个ref在handleCardClick中被设为true，在切换字符的useEffect中被设为false
     useEffect(() => {
-        if (isAnimating && strokeContainerRef.current && currentChar) {
-            // 动态导入 HanziWriter
-            import('hanzi-writer').then(({ default: HanziWriter }) => {
-                // 清空容器
-                strokeContainerRef.current.innerHTML = '';
-                try {
-                    hanziWriterRef.current = HanziWriter.create(strokeContainerRef.current, currentChar.char, {
-                        width: 200,
-                        height: 200,
-                        padding: 0,
-                        strokeColor: '#e54',  // 统一笔画颜色 - 红色
-                        strokeAnimationSpeed: 1,
-                        delayBetweenStrokes: 300,
-                        showOutline: false,
-                        showCharacter: false
-                    });
-                    // 开始动画
-                    hanziWriterRef.current.animateCharacter({
-                        onComplete: () => {
-                            // 动画完成后保持显示HanziWriter的字符
-                            // 不调用 setIsAnimating(false)，保持原有汉字隐藏
-                            if (hanziWriterRef.current) {
-                                hanziWriterRef.current.showCharacter();
-                            }
-                        }
-                    });
-                } catch (error) {
-                    console.error('HanziWriter 初始化失败:', error);
-                    setIsAnimating(false);
-                }
-            });
+        console.log('[HanziWriter Effect] isAnimating:', isAnimating, 'clickState:', clickState, 'currentChar:', currentChar?.char, 'containerRef:', !!strokeContainerRef.current, 'shouldAnimateRef:', shouldAnimateRef.current);
+
+        // 只有当以下条件都满足时才初始化动画:
+        // 1. isAnimating 为 true（用户点击触发）
+        // 2. clickState >= 2（确保用户已经点击两次，防止切换字符时的残留状态）
+        // 3. shouldAnimateRef.current 为 true（确保是当前字符的动画请求，不是上一个字符残留的）
+        // 4. 容器和字符存在
+        if (!isAnimating || clickState < 2 || !shouldAnimateRef.current || !strokeContainerRef.current || !currentChar) {
+            console.log('[HanziWriter Effect] Skipping - conditions not met (isAnimating:', isAnimating, 'clickState:', clickState, 'shouldAnimateRef:', shouldAnimateRef.current, ')');
+            return;
         }
-    }, [isAnimating, currentChar]);
+
+        // 设置应该播放动画的标志
+        shouldAnimateRef.current = true;
+
+        // 保存当前索引、字符和动画会话ID，用于在回调中检查是否仍然有效
+        const animatingIndex = currentIndexRef.current;
+        const animatingChar = currentChar.char;
+        const sessionId = animationSessionRef.current;
+        console.log('[HanziWriter Effect] Starting animation for:', animatingChar, 'at index:', animatingIndex, 'session:', sessionId);
+
+        // 动态导入 HanziWriter
+        import('hanzi-writer').then(({ default: HanziWriter }) => {
+            // 检查是否应该继续动画（三重检查：ref状态、会话ID、索引）
+            if (!shouldAnimateRef.current) {
+                console.log('[HanziWriter Effect] shouldAnimateRef is false, aborting');
+                return;
+            }
+
+            // 检查会话ID是否仍然匹配（防止字符切换后的异步回调）
+            if (animationSessionRef.current !== sessionId) {
+                console.log('[HanziWriter Effect] Session changed during import, aborting. Expected:', sessionId, 'Current:', animationSessionRef.current);
+                return;
+            }
+
+            // 再次检查索引是否仍然匹配（防止在异步加载期间切换了字符）
+            if (currentIndexRef.current !== animatingIndex) {
+                console.log('[HanziWriter Effect] Index changed during import, aborting');
+                return;
+            }
+
+            // 检查容器是否仍然存在
+            if (!strokeContainerRef.current) {
+                console.log('[HanziWriter Effect] Container no longer exists, aborting');
+                return;
+            }
+
+            // 清空容器
+            strokeContainerRef.current.innerHTML = '';
+            console.log('[HanziWriter Effect] Creating HanziWriter for:', animatingChar);
+
+            try {
+                hanziWriterRef.current = HanziWriter.create(strokeContainerRef.current, animatingChar, {
+                    width: 200,
+                    height: 200,
+                    padding: 0,
+                    strokeColor: '#e54',  // 统一笔画颜色 - 红色
+                    strokeAnimationSpeed: 1,
+                    delayBetweenStrokes: 300,
+                    showOutline: false,
+                    showCharacter: false,
+                    // 添加字符数据加载回调
+                    onLoadCharDataSuccess: (data) => {
+                        console.log('[HanziWriter Effect] Character data loaded successfully for:', animatingChar);
+
+                        // 检查是否应该继续动画（三重检查）
+                        if (!shouldAnimateRef.current) {
+                            console.log('[HanziWriter Effect] shouldAnimateRef became false after data load, aborting');
+                            return;
+                        }
+
+                        // 首先检查会话ID是否仍然匹配
+                        if (animationSessionRef.current !== sessionId) {
+                            console.log('[HanziWriter Effect] Session changed after data load, aborting animation. Expected:', sessionId, 'Current:', animationSessionRef.current);
+                            return;
+                        }
+
+                        // 检查是否仍然是同一个字符
+                        if (currentIndexRef.current !== animatingIndex) {
+                            console.log('[HanziWriter Effect] Index changed after data load, aborting animation');
+                            return;
+                        }
+                        // 数据加载成功后开始动画
+                        console.log('[HanziWriter Effect] Starting animateCharacter');
+                        hanziWriterRef.current.animateCharacter({
+                            onComplete: () => {
+                                console.log('[HanziWriter Effect] Animation complete for:', animatingChar);
+
+                                // 检查是否应该更新状态（三重检查）
+                                if (!shouldAnimateRef.current) {
+                                    console.log('[HanziWriter Effect] shouldAnimateRef became false after animation, skipping state update');
+                                    return;
+                                }
+
+                                // 首先检查会话ID是否仍然匹配
+                                if (animationSessionRef.current !== sessionId) {
+                                    console.log('[HanziWriter Effect] Session changed after animation complete, skipping state update');
+                                    return;
+                                }
+
+                                // 检查索引是否仍然匹配（防止动画完成时已经切换了字符）
+                                if (currentIndexRef.current !== animatingIndex) {
+                                    return;
+                                }
+                                // 动画完成后保持显示HanziWriter的字符
+                                setAnimationCompleted(true);
+                                if (hanziWriterRef.current) {
+                                    hanziWriterRef.current.showCharacter();
+                                }
+                            }
+                        });
+                    },
+                    onLoadCharDataError: (reason) => {
+                        console.error('[HanziWriter Effect] Failed to load character data for:', animatingChar, 'reason:', reason);
+                        // 只有在会话ID匹配且应该动画时才更新状态
+                        if (shouldAnimateRef.current && animationSessionRef.current === sessionId) {
+                            setIsAnimating(false);
+                            setAnimationCompleted(false);
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('[HanziWriter Effect] 初始化失败:', error);
+                if (shouldAnimateRef.current && animationSessionRef.current === sessionId) {
+                    setIsAnimating(false);
+                    setAnimationCompleted(false);
+                }
+            }
+        }).catch(error => {
+            console.error('[HanziWriter Effect] Import failed:', error);
+            if (shouldAnimateRef.current && animationSessionRef.current === sessionId) {
+                setIsAnimating(false);
+                setAnimationCompleted(false);
+            }
+        });
+    }, [isAnimating, clickState, currentChar]);
 
     if (!lesson) {
         return (
@@ -121,10 +260,23 @@ const Lesson = () => {
             // 第二次及以后点击：朗读
             setClickState(2);
             setIsPlaying(true);
+
+            // 在开始朗读时启动笔画动画
+            // 这确保了动画与朗读同步开始
+            // 关键：先设置shouldAnimateRef为true，表示这是用户主动触发的动画请求
+            shouldAnimateRef.current = true;
+            setIsAnimating(true);
+
             try {
                 // 朗读汉字
                 await speak(currentChar.char, { rate: 0.5 });
                 await new Promise(r => setTimeout(r, 300));
+
+                // 朗读释义
+                if (currentChar.meaning) {
+                    await speak(currentChar.meaning, { rate: 0.7 });
+                    await new Promise(r => setTimeout(r, 300));
+                }
 
                 // 朗读词语
                 if (currentChar.words && currentChar.words[0]) {
@@ -132,16 +284,14 @@ const Lesson = () => {
                     await new Promise(r => setTimeout(r, 300));
                 }
 
-                // 朗读普通例句
-                if (currentChar.example) {
-                    await speak(currentChar.example, { rate: 0.7 });
+                // 朗读记忆点/故事（字的解释）
+                if (currentChar.story) {
+                    await speak(currentChar.story, { rate: 0.7 });
                     await new Promise(r => setTimeout(r, 500));
                 }
 
-                // 朗读Minecraft造句 & 开始笔画动画
+                // 朗读Minecraft造句
                 if (currentChar.minecraftSentence) {
-                    // 开始笔画动画（在语音开始时就触发）
-                    setIsAnimating(true);
                     await speak(currentChar.minecraftSentence, { rate: 0.7 });
                 }
             } catch (error) {
@@ -220,7 +370,7 @@ const Lesson = () => {
                     onClick={handleCardClick}
                 >
                     {/* 汉字容器 - 笔画动画直接叠加 */}
-                    <div className={`card-character-wrapper ${isAnimating ? 'animating' : ''}`}>
+                    <div className={`card-character-wrapper ${isAnimating || animationCompleted ? 'animating' : ''}`}>
                         <div className="card-character">{currentChar.char}</div>
                         <div className="stroke-animation-overlay" ref={strokeContainerRef}></div>
                     </div>
@@ -245,13 +395,13 @@ const Lesson = () => {
                     <div className="char-details">
                         {/* 释义 */}
                         <div className="detail-row">
-                            <span className="detail-label">释义</span>
+                            <span className="detail-label">📖 释义</span>
                             <span className="detail-content">{currentChar.meaning}</span>
                         </div>
 
                         {/* 词语 */}
                         <div className="detail-row">
-                            <span className="detail-label">词语</span>
+                            <span className="detail-label">📝 词语</span>
                             <div className="words-list">
                                 {currentChar.words.map((word, idx) => (
                                     <span key={idx} className="word-tag">{word}</span>
@@ -259,11 +409,13 @@ const Lesson = () => {
                             </div>
                         </div>
 
-                        {/* 例句 */}
-                        <div className="detail-row">
-                            <span className="detail-label">例句</span>
-                            <span className="detail-content">{currentChar.example}</span>
-                        </div>
+                        {/* 记忆点/故事 - 字的解释 */}
+                        {currentChar.story && (
+                            <div className="detail-row story-row">
+                                <span className="detail-label">💡 记忆点</span>
+                                <span className="detail-content">{currentChar.story}</span>
+                            </div>
+                        )}
 
                         {/* Minecraft造句 */}
                         <div className="detail-row minecraft-sentence">
