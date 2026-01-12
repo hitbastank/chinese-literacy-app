@@ -44,6 +44,12 @@ const Lesson = () => {
         preloadVoices();
     }, []);
 
+    // 课程切换时重置索引到第一个字
+    useEffect(() => {
+        setCurrentIndex(0);
+    }, [lessonId]);
+
+
     // 用于追踪当前字符的索引，防止动画在切换字符后仍然触发
     const currentIndexRef = useRef(currentIndex);
 
@@ -268,31 +274,31 @@ const Lesson = () => {
             setIsAnimating(true);
 
             try {
-                // 朗读汉字
-                await speak(currentChar.char, { rate: 0.5 });
-                await new Promise(r => setTimeout(r, 300));
+                // 朗读汉字 - 稍慢，让孩子听清楚
+                await speak(currentChar.char, { rate: 0.7 });
+                await new Promise(r => setTimeout(r, 100)); // 短暂停顿
 
-                // 朗读释义
+                // 朗读释义 - 正常语速
                 if (currentChar.meaning) {
-                    await speak(currentChar.meaning, { rate: 0.7 });
-                    await new Promise(r => setTimeout(r, 300));
+                    await speak(currentChar.meaning, { rate: 0.9 });
+                    await new Promise(r => setTimeout(r, 100));
                 }
 
-                // 朗读词语
+                // 朗读词语 - 正常语速
                 if (currentChar.words && currentChar.words[0]) {
-                    await speak(currentChar.words[0], { rate: 0.6 });
-                    await new Promise(r => setTimeout(r, 300));
+                    await speak(currentChar.words[0], { rate: 0.85 });
+                    await new Promise(r => setTimeout(r, 100));
                 }
 
-                // 朗读记忆点/故事（字的解释）
+                // 朗读记忆点/故事（字的解释）- 稍快
                 if (currentChar.story) {
-                    await speak(currentChar.story, { rate: 0.7 });
-                    await new Promise(r => setTimeout(r, 500));
+                    await speak(currentChar.story, { rate: 1.0 });
+                    await new Promise(r => setTimeout(r, 150));
                 }
 
-                // 朗读Minecraft造句
+                // 朗读Minecraft造句 - 正常语速
                 if (currentChar.minecraftSentence) {
-                    await speak(currentChar.minecraftSentence, { rate: 0.7 });
+                    await speak(currentChar.minecraftSentence, { rate: 0.95 });
                 }
             } catch (error) {
                 console.error('语音播放失败:', error);

@@ -1,21 +1,75 @@
 /**
  * 语音合成工具
- * 支持 Web Speech API 和 ChatTTS 本地服务
+ * 支持 Edge TTS (微软语音)、ChatTTS 和 Web Speech API
+ * 
+ * 优先级：Edge TTS > ChatTTS > Web Speech API
  */
 
-// ChatTTS 服务器配置
+// 服务器配置
+const EDGE_TTS_SERVER = 'http://localhost:8766';
 const CHATTTS_SERVER = 'http://localhost:8765';
-let useChatTTS = false; // 默认使用 Web Speech API
+
+// TTS 引擎类型
+const TTS_ENGINE = {
+    EDGE_TTS: 'EdgeTTS',
+    CHAT_TTS: 'ChatTTS',
+    WEB_SPEECH: 'WebSpeech'
+};
+
+// 当前使用的引擎
+let currentEngine = TTS_ENGINE.WEB_SPEECH;
+
+// Edge TTS 可用的中文语音（已验证可用）
+export const EDGE_VOICES = {
+    'xiaoxiao': { id: 'zh-CN-XiaoxiaoNeural', name: '晓晓', desc: '女声，温柔亲切' },
+    'xiaoyi': { id: 'zh-CN-XiaoyiNeural', name: '晓伊', desc: '卡通女声，活泼可爱' },
+    'yunxi': { id: 'zh-CN-YunxiNeural', name: '云希', desc: '男声，年轻活力' },
+    'yunxia': { id: 'zh-CN-YunxiaNeural', name: '云夏', desc: '卡通男声，可爱' },
+    'yunjian': { id: 'zh-CN-YunjianNeural', name: '云健', desc: '男声，热情' },
+    'yunyang': { id: 'zh-CN-YunyangNeural', name: '云扬', desc: '男声，新闻播报' },
+};
+
+// 当前选择的语音 - 默认使用卡通女声（活泼可爱）
+let currentVoice = 'xiaoyi';
+
+/**
+ * 检查 Edge TTS 服务是否可用
+ */
+export const checkEdgeTTSAvailable = async () => {
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+        const response = await fetch(`${EDGE_TTS_SERVER}/health`, {
+            method: 'GET',
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+            const data = await response.json();
+            return data.status === 'ok';
+        }
+        return false;
+    } catch (error) {
+        return false;
+    }
+};
 
 /**
  * 检查 ChatTTS 服务是否可用
  */
 export const checkChatTTSAvailable = async () => {
     try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+
         const response = await fetch(`${CHATTTS_SERVER}/health`, {
             method: 'GET',
-            timeout: 2000
+            signal: controller.signal
         });
+        clearTimeout(timeoutId);
+
         if (response.ok) {
             const data = await response.json();
             return data.status === 'ok' && data.model_loaded;
@@ -27,34 +81,24 @@ export const checkChatTTSAvailable = async () => {
 };
 
 /**
- * 切换到 ChatTTS 模式
+ * 获取当前使用的 TTS 引擎
  */
-export const enableChatTTS = async () => {
-    const available = await checkChatTTSAvailable();
-    if (available) {
-        useChatTTS = true;
-        console.log('✅ 已切换到 ChatTTS 语音');
-        return true;
-    } else {
-        console.log('⚠️ ChatTTS 服务不可用，保持使用 Web Speech API');
-        return false;
+export const getCurrentTTSEngine = () => currentEngine;
+
+/**
+ * 设置语音
+ */
+export const setVoice = (voiceKey) => {
+    if (EDGE_VOICES[voiceKey]) {
+        currentVoice = voiceKey;
+        console.log(`🎤 语音已切换到: ${EDGE_VOICES[voiceKey].name}`);
     }
 };
 
 /**
- * 切换回 Web Speech API
+ * 获取当前语音
  */
-export const disableChatTTS = () => {
-    useChatTTS = false;
-    console.log('已切换回 Web Speech API');
-};
-
-/**
- * 获取当前使用的 TTS 引擎
- */
-export const getCurrentTTSEngine = () => {
-    return useChatTTS ? 'ChatTTS' : 'Web Speech API';
-};
+export const getCurrentVoice = () => EDGE_VOICES[currentVoice];
 
 // 检查浏览器是否支持语音合成
 export const isSpeechSupported = () => {
@@ -64,13 +108,61 @@ export const isSpeechSupported = () => {
 // 获取中文语音
 const getChineseVoice = () => {
     const voices = window.speechSynthesis.getVoices();
-    // 优先选择中文普通话语音
     const zhVoice = voices.find(voice =>
         voice.lang.includes('zh-CN') ||
         voice.lang.includes('zh_CN') ||
         voice.lang.includes('cmn')
     );
     return zhVoice || voices[0];
+};
+
+/**
+ * 使用 Edge TTS 朗读文本
+ */
+const speakWithEdgeTTS = async (text, options = {}) => {
+    try {
+        const voice = EDGE_VOICES[currentVoice]?.id || EDGE_VOICES.xiaoxiao.id;
+
+        const response = await fetch(`${EDGE_TTS_SERVER}/tts`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                text: text,
+                voice: voice,
+                rate: options.rate || 0.9
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Edge TTS 请求失败');
+        }
+
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+
+        return new Promise((resolve, reject) => {
+            audio.onended = () => {
+                URL.revokeObjectURL(audioUrl);
+                resolve();
+            };
+            audio.onerror = (e) => {
+                URL.revokeObjectURL(audioUrl);
+                reject(e);
+            };
+            audio.play();
+        });
+    } catch (error) {
+        console.error('Edge TTS 播放失败，尝试回退:', error);
+        // 尝试回退到 ChatTTS
+        if (await checkChatTTSAvailable()) {
+            return speakWithChatTTS(text, options);
+        }
+        // 最后回退到 Web Speech API
+        return speakWithWebSpeech(text, options);
+    }
 };
 
 /**
@@ -110,7 +202,6 @@ const speakWithChatTTS = async (text, options = {}) => {
         });
     } catch (error) {
         console.error('ChatTTS 播放失败，回退到 Web Speech API:', error);
-        // 回退到 Web Speech API
         return speakWithWebSpeech(text, options);
     }
 };
@@ -132,8 +223,8 @@ const speakWithWebSpeech = (text, options = {}) => {
 
         // 设置语音参数
         utterance.lang = options.lang || 'zh-CN';
-        utterance.rate = options.rate || 0.8; // 语速稍慢，适合儿童
-        utterance.pitch = options.pitch || 1.1; // 音调稍高
+        utterance.rate = options.rate || 0.8;
+        utterance.pitch = options.pitch || 1.1;
         utterance.volume = options.volume || 1;
 
         // 尝试获取中文语音
@@ -150,22 +241,23 @@ const speakWithWebSpeech = (text, options = {}) => {
 };
 
 /**
- * 朗读文本 - 自动选择 TTS 引擎
+ * 朗读文本 - 根据当前引擎选择
  */
 export const speak = async (text, options = {}) => {
-    if (useChatTTS) {
-        return speakWithChatTTS(text, options);
-    } else {
-        return speakWithWebSpeech(text, options);
+    switch (currentEngine) {
+        case TTS_ENGINE.EDGE_TTS:
+            return speakWithEdgeTTS(text, options);
+        case TTS_ENGINE.CHAT_TTS:
+            return speakWithChatTTS(text, options);
+        default:
+            return speakWithWebSpeech(text, options);
     }
 };
 
 // 朗读单个汉字（带拼音）
 export const speakCharacter = async (char, pinyin) => {
     try {
-        // 先读汉字
         await speak(char, { rate: 0.6 });
-        // 短暂停顿后读拼音
         await new Promise(resolve => setTimeout(resolve, 300));
         await speak(pinyin, { rate: 0.7 });
     } catch (error) {
@@ -191,29 +283,67 @@ export const speakSentence = async (sentence) => {
     }
 };
 
-// 预加载语音（在页面加载时调用）
+/**
+ * 预加载语音 - 自动检测可用的 TTS 引擎
+ */
 export const preloadVoices = async () => {
-    // 尝试启用 ChatTTS
+    // 优先检查 Edge TTS
+    const edgeTTSAvailable = await checkEdgeTTSAvailable();
+    if (edgeTTSAvailable) {
+        currentEngine = TTS_ENGINE.EDGE_TTS;
+        console.log('🎤 Edge TTS 服务可用，已自动启用（微软语音：晓晓）');
+        return;
+    }
+
+    // 其次检查 ChatTTS
     const chatTTSAvailable = await checkChatTTSAvailable();
     if (chatTTSAvailable) {
-        useChatTTS = true;
+        currentEngine = TTS_ENGINE.CHAT_TTS;
         console.log('🎤 ChatTTS 服务可用，已自动启用');
-    } else {
-        console.log('📢 使用 Web Speech API');
+        return;
     }
+
+    // 最后使用 Web Speech API
+    currentEngine = TTS_ENGINE.WEB_SPEECH;
+    console.log('📢 使用 Web Speech API（浏览器内置语音）');
 
     // 预加载 Web Speech API 语音列表
     if (isSpeechSupported()) {
-        // 某些浏览器需要先获取一次语音列表
         window.speechSynthesis.getVoices();
-
-        // 监听语音列表变化
         if (window.speechSynthesis.onvoiceschanged !== undefined) {
             window.speechSynthesis.onvoiceschanged = () => {
                 window.speechSynthesis.getVoices();
             };
         }
     }
+};
+
+// 手动切换引擎
+export const enableEdgeTTS = async () => {
+    const available = await checkEdgeTTSAvailable();
+    if (available) {
+        currentEngine = TTS_ENGINE.EDGE_TTS;
+        console.log('✅ 已切换到 Edge TTS（微软语音）');
+        return true;
+    }
+    console.log('⚠️ Edge TTS 服务不可用');
+    return false;
+};
+
+export const enableChatTTS = async () => {
+    const available = await checkChatTTSAvailable();
+    if (available) {
+        currentEngine = TTS_ENGINE.CHAT_TTS;
+        console.log('✅ 已切换到 ChatTTS');
+        return true;
+    }
+    console.log('⚠️ ChatTTS 服务不可用');
+    return false;
+};
+
+export const disableTTS = () => {
+    currentEngine = TTS_ENGINE.WEB_SPEECH;
+    console.log('已切换回 Web Speech API');
 };
 
 export default {
@@ -223,8 +353,13 @@ export default {
     speakSentence,
     isSpeechSupported,
     preloadVoices,
+    enableEdgeTTS,
     enableChatTTS,
-    disableChatTTS,
+    disableTTS,
     getCurrentTTSEngine,
-    checkChatTTSAvailable
+    checkEdgeTTSAvailable,
+    checkChatTTSAvailable,
+    setVoice,
+    getCurrentVoice,
+    EDGE_VOICES
 };
