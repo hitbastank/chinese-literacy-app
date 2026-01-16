@@ -1,8 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getLessonById, getAdjacentLessons } from '../data/curriculum';
-import { speak } from '../utils/speech';
-import { preloadVoices } from '../utils/speech';
+import { speak, preloadVoices, preloadCharacterAudio, preloadMultipleCharacters } from '../utils/speech';
 import {
     markAsStudied,
     markAsMastered,
@@ -33,21 +32,32 @@ const Lesson = () => {
     const [studyCount, setStudyCount] = useState(0);
     const [charMastered, setCharMastered] = useState(false);
     const [needsReviewChecked, setNeedsReviewChecked] = useState(false);
+    const [isPreloading, setIsPreloading] = useState(false); // 预加载状态
     const hanziWriterRef = useRef(null);
     const strokeContainerRef = useRef(null);
 
     // 当前汉字 - 需要在 useEffect 之前声明
     const currentChar = lesson ? lesson.characters[currentIndex] : null;
 
-    // 预加载语音
+    // 预加载语音引擎
     useEffect(() => {
         preloadVoices();
     }, []);
 
-    // 课程切换时重置索引到第一个字
+    // 课程切换时重置索引到第一个字，并预加载音频
     useEffect(() => {
         setCurrentIndex(0);
-    }, [lessonId]);
+
+        // 预加载当前课程的前几个汉字音频
+        if (lesson && lesson.characters.length > 0) {
+            setIsPreloading(true);
+            // 预加载前3个汉字的音频
+            const charsToPreload = lesson.characters.slice(0, 3);
+            preloadMultipleCharacters(charsToPreload).finally(() => {
+                setIsPreloading(false);
+            });
+        }
+    }, [lessonId, lesson]);
 
 
     // 用于追踪当前字符的索引，防止动画在切换字符后仍然触发
@@ -260,43 +270,44 @@ const Lesson = () => {
     // 处理卡片点击
     const handleCardClick = useCallback(async () => {
         if (clickState === 0) {
-            // 第一次点击：显示拼音
+            // 第一次点击：显示拼音，同时预加载当前汉字的所有音频
             setClickState(1);
+            // 立即预加载当前汉字的所有音频，这样第二次点击时就不用等待
+            preloadCharacterAudio(currentChar);
         } else if (clickState >= 1 && !isPlaying) {
             // 第二次及以后点击：朗读
             setClickState(2);
             setIsPlaying(true);
 
-            // 在开始朗读时启动笔画动画
-            // 这确保了动画与朗读同步开始
-            // 关键：先设置shouldAnimateRef为true，表示这是用户主动触发的动画请求
-            shouldAnimateRef.current = true;
-            setIsAnimating(true);
-
             try {
-                // 朗读汉字 - 稍慢，让孩子听清楚
-                await speak(currentChar.char, { rate: 0.7 });
-                await new Promise(r => setTimeout(r, 100)); // 短暂停顿
+                // 先开始朗读汉字
+                const speakPromise = speak(currentChar.char, { rate: 0.7 });
 
-                // 朗读释义 - 正常语速
+                // 等待 500ms 后再启动笔画动画（确保语音已开始播放）
+                setTimeout(() => {
+                    shouldAnimateRef.current = true;
+                    setIsAnimating(true);
+                }, 500);
+
+                // 等待汉字朗读完成
+                await speakPromise;
+
+                // 朗读释义
                 if (currentChar.meaning) {
                     await speak(currentChar.meaning, { rate: 0.9 });
-                    await new Promise(r => setTimeout(r, 100));
                 }
 
-                // 朗读词语 - 正常语速
+                // 朗读词语
                 if (currentChar.words && currentChar.words[0]) {
                     await speak(currentChar.words[0], { rate: 0.85 });
-                    await new Promise(r => setTimeout(r, 100));
                 }
 
-                // 朗读记忆点/故事（字的解释）- 稍快
+                // 朗读记忆点/故事
                 if (currentChar.story) {
                     await speak(currentChar.story, { rate: 1.0 });
-                    await new Promise(r => setTimeout(r, 150));
                 }
 
-                // 朗读Minecraft造句 - 正常语速
+                // 朗读Minecraft造句
                 if (currentChar.minecraftSentence) {
                     await speak(currentChar.minecraftSentence, { rate: 0.95 });
                 }
@@ -319,14 +330,21 @@ const Lesson = () => {
         }
     };
 
-    // 点击"下一个"时记录为学过
+    // 点击"下一个"时记录为学过，并预加载后续汉字
     const goToNextChar = () => {
         // 记录学习
         const count = markAsStudied(currentChar.char);
         setStudyCount(count);
 
         if (currentIndex < lesson.characters.length - 1) {
-            setCurrentIndex(currentIndex + 1);
+            const nextIndex = currentIndex + 1;
+            setCurrentIndex(nextIndex);
+
+            // 预加载接下来2个汉字的音频（当前的下一个和再下一个）
+            const upcomingChars = lesson.characters.slice(nextIndex + 1, nextIndex + 3);
+            if (upcomingChars.length > 0) {
+                preloadMultipleCharacters(upcomingChars);
+            }
         }
     };
 
