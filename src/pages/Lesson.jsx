@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { getLessonById, getAdjacentLessons } from '../data/curriculum';
-import { speak, preloadVoices, preloadCharacterAudio, preloadMultipleCharacters } from '../utils/speech';
+import { speak, preloadVoices, preloadCharacterAudio, preloadMultipleCharacters, stopSpeech, pauseSpeech, resumeSpeech } from '../utils/speech';
 import {
     markAsStudied,
     markAsMastered,
@@ -33,6 +33,7 @@ const Lesson = () => {
     const [charMastered, setCharMastered] = useState(false);
     const [needsReviewChecked, setNeedsReviewChecked] = useState(false);
     const [isPreloading, setIsPreloading] = useState(false); // 预加载状态
+    const [isPaused, setIsPaused] = useState(false); // 语音暂停状态
     const hanziWriterRef = useRef(null);
     const strokeContainerRef = useRef(null);
 
@@ -48,6 +49,11 @@ const Lesson = () => {
     useEffect(() => {
         setCurrentIndex(0);
 
+        // 停止任何正在播放的语音
+        stopSpeech();
+        setIsPlaying(false);
+        setIsPaused(false);
+
         // 预加载当前课程的前几个汉字音频
         if (lesson && lesson.characters.length > 0) {
             setIsPreloading(true);
@@ -57,7 +63,19 @@ const Lesson = () => {
                 setIsPreloading(false);
             });
         }
-    }, [lessonId, lesson]);
+
+        // 预加载下一课的数据（防止切换时空白页）
+        if (nextLesson && nextLesson.characters) {
+            // 延迟预加载下一课的音频，避免影响当前课程加载
+            setTimeout(() => {
+                const nextCharsToPreload = nextLesson.characters.slice(0, 2);
+                if (nextCharsToPreload.length > 0) {
+                    preloadMultipleCharacters(nextCharsToPreload);
+                    console.log(`📦 预加载下一课: ${nextLesson.title}`);
+                }
+            }, 2000);
+        }
+    }, [lessonId, lesson, nextLesson]);
 
 
     // 用于追踪当前字符的索引，防止动画在切换字符后仍然触发
@@ -319,19 +337,30 @@ const Lesson = () => {
         }
     }, [clickState, currentChar, isPlaying]);
 
-    // 导航函数
+    // 导航函数 - 切换字符时中断当前语音
     const goToChar = (index) => {
+        stopSpeech();
+        setIsPlaying(false);
+        setIsPaused(false);
         setCurrentIndex(index);
     };
 
     const goToPrevChar = () => {
         if (currentIndex > 0) {
+            stopSpeech();
+            setIsPlaying(false);
+            setIsPaused(false);
             setCurrentIndex(currentIndex - 1);
         }
     };
 
     // 点击"下一个"时记录为学过，并预加载后续汉字
     const goToNextChar = () => {
+        // 中断当前语音
+        stopSpeech();
+        setIsPlaying(false);
+        setIsPaused(false);
+
         // 记录学习
         const count = markAsStudied(currentChar.char);
         setStudyCount(count);
@@ -368,6 +397,24 @@ const Lesson = () => {
         } else {
             unmarkNeedsReview(currentChar.char);
         }
+    };
+
+    // 暂停/恢复语音
+    const handlePauseResume = () => {
+        if (isPaused) {
+            resumeSpeech();
+            setIsPaused(false);
+        } else {
+            pauseSpeech();
+            setIsPaused(true);
+        }
+    };
+
+    // 停止语音
+    const handleStopSpeech = () => {
+        stopSpeech();
+        setIsPlaying(false);
+        setIsPaused(false);
     };
 
     return (
@@ -407,11 +454,30 @@ const Lesson = () => {
                     </div>
                 )}
 
-                {/* 提示文字 - 放在田字格外面 */}
+                {/* 提示文字和控制按钮 - 放在田字格外面 */}
                 <div className="card-hint">
                     {clickState === 0 && '👆 点击显示拼音'}
                     {clickState === 1 && '🔊 再次点击朗读'}
-                    {clickState >= 2 && (isPlaying ? '🎵 正在朗读...' : '🔊 点击再听一次')}
+                    {clickState >= 2 && !isPlaying && '🔊 点击再听一次'}
+                    {clickState >= 2 && isPlaying && (
+                        <div className="speech-controls">
+                            <span className="playing-text">{isPaused ? '⏸️ 已暂停' : '🎵 正在朗读...'}</span>
+                            <button
+                                className="speech-control-btn pause-btn"
+                                onClick={(e) => { e.stopPropagation(); handlePauseResume(); }}
+                                title={isPaused ? '继续播放' : '暂停'}
+                            >
+                                {isPaused ? '▶️' : '⏸️'}
+                            </button>
+                            <button
+                                className="speech-control-btn stop-btn"
+                                onClick={(e) => { e.stopPropagation(); handleStopSpeech(); }}
+                                title="停止"
+                            >
+                                ⏹️
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 {/* 汉字详情 (点击后显示) */}

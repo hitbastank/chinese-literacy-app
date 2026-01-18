@@ -5,14 +5,25 @@
  * - studied: 学过的字及学习次数 { char: count }
  * - mastered: 彻底学会的字 [char, ...]
  * - needsReview: 标记为不熟练的字 [char, ...]
+ * 
+ * 专属用户ID用于确保进度跨会话一致
  */
 
+// 专属用户ID - 用于持久化存储
+const USER_UID = 'user-mantou-2026';
+
+/**
+ * 获取当前用户ID
+ * @returns {string} 用户唯一标识符
+ */
+export const getUserId = () => USER_UID;
+
 const STORAGE_KEYS = {
-    PROGRESS: 'chinese_literacy_progress',
-    SETTINGS: 'chinese_literacy_settings',
-    ACHIEVEMENTS: 'chinese_literacy_achievements',
-    DAILY_GOAL: 'chinese_literacy_daily_goal',
-    LAST_STUDY_DATE: 'chinese_literacy_last_study_date'
+    PROGRESS: `${USER_UID}_chinese_literacy_progress`,
+    SETTINGS: `${USER_UID}_chinese_literacy_settings`,
+    ACHIEVEMENTS: `${USER_UID}_chinese_literacy_achievements`,
+    DAILY_GOAL: `${USER_UID}_chinese_literacy_daily_goal`,
+    LAST_STUDY_DATE: `${USER_UID}_chinese_literacy_last_study_date`
 };
 
 // 获取学习进度

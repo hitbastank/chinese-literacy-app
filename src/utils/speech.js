@@ -24,6 +24,99 @@ let currentEngine = TTS_ENGINE.WEB_SPEECH;
 // 浏览器端音频缓存 - 存储已下载的音频 Blob
 const browserAudioCache = new Map();
 
+// 当前播放的音频对象（用于暂停/停止控制）
+let currentAudio = null;
+let currentAudioUrl = null;
+let speechAbortController = null;
+let isSpeechPaused = false;
+
+/**
+ * 停止当前语音播放
+ */
+export const stopSpeech = () => {
+    // 停止 HTML5 Audio
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        if (currentAudioUrl) {
+            URL.revokeObjectURL(currentAudioUrl);
+            currentAudioUrl = null;
+        }
+        currentAudio = null;
+    }
+
+    // 取消 Web Speech API
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+    }
+
+    // 中止任何进行中的请求
+    if (speechAbortController) {
+        speechAbortController.abort();
+        speechAbortController = null;
+    }
+
+    isSpeechPaused = false;
+};
+
+/**
+ * 暂停当前语音播放
+ */
+export const pauseSpeech = () => {
+    if (currentAudio && !currentAudio.paused) {
+        currentAudio.pause();
+        isSpeechPaused = true;
+        return true;
+    }
+
+    // Web Speech API
+    if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+        window.speechSynthesis.pause();
+        isSpeechPaused = true;
+        return true;
+    }
+
+    return false;
+};
+
+/**
+ * 恢复暂停的语音播放
+ */
+export const resumeSpeech = () => {
+    if (currentAudio && isSpeechPaused) {
+        currentAudio.play();
+        isSpeechPaused = false;
+        return true;
+    }
+
+    // Web Speech API
+    if ('speechSynthesis' in window && isSpeechPaused) {
+        window.speechSynthesis.resume();
+        isSpeechPaused = false;
+        return true;
+    }
+
+    return false;
+};
+
+/**
+ * 检查语音是否正在播放
+ */
+export const isSpeechPlaying = () => {
+    if (currentAudio && !currentAudio.paused && !currentAudio.ended) {
+        return true;
+    }
+    if ('speechSynthesis' in window && window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+        return true;
+    }
+    return false;
+};
+
+/**
+ * 检查语音是否暂停
+ */
+export const isSpeechPausedState = () => isSpeechPaused;
+
 /**
  * 检查 MiniMax TTS 服务是否可用
  */
@@ -233,13 +326,26 @@ const speakWithEdgeTTS = async (text, options = {}) => {
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
 
+        // 跟踪当前音频以支持暂停/停止
+        currentAudio = audio;
+        currentAudioUrl = audioUrl;
+        isSpeechPaused = false;
+
         return new Promise((resolve, reject) => {
             audio.onended = () => {
                 URL.revokeObjectURL(audioUrl);
+                if (currentAudio === audio) {
+                    currentAudio = null;
+                    currentAudioUrl = null;
+                }
                 resolve();
             };
             audio.onerror = (e) => {
                 URL.revokeObjectURL(audioUrl);
+                if (currentAudio === audio) {
+                    currentAudio = null;
+                    currentAudioUrl = null;
+                }
                 reject(e);
             };
             audio.play();
@@ -249,6 +355,7 @@ const speakWithEdgeTTS = async (text, options = {}) => {
         return speakWithWebSpeech(text, options);
     }
 };
+
 
 /**
  * 使用 ChatTTS 朗读文本
@@ -526,5 +633,10 @@ export default {
     getCurrentTTSEngine,
     checkMiniMaxAvailable,
     checkEdgeTTSAvailable,
-    checkChatTTSAvailable
+    checkChatTTSAvailable,
+    stopSpeech,
+    pauseSpeech,
+    resumeSpeech,
+    isSpeechPlaying,
+    isSpeechPausedState
 };

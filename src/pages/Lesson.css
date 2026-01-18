@@ -189,6 +189,55 @@
     text-align: center;
 }
 
+/* 语音控制按钮 */
+.speech-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.playing-text {
+    color: var(--mc-gold);
+    font-weight: 500;
+}
+
+.speech-control-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: var(--mc-stone);
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.speech-control-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.speech-control-btn.pause-btn {
+    background: linear-gradient(135deg, #4CAF50, #8BC34A);
+}
+
+.speech-control-btn.pause-btn:hover {
+    background: linear-gradient(135deg, #66BB6A, #9CCC65);
+}
+
+.speech-control-btn.stop-btn {
+    background: linear-gradient(135deg, #e54, #c44);
+}
+
+.speech-control-btn.stop-btn:hover {
+    background: linear-gradient(135deg, #f57, #e55);
+}
+
 /* 播放波浪动画 - 在卡片外部显示 */
 .playing-waves {
     display: flex;
