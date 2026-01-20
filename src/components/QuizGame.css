@@ -26,6 +26,19 @@
 
 .quiz-progress .progress-container {
     width: 100%;
+    height: 16px;
+    background: #4B4B4B;
+    border: 3px solid #000;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.quiz-progress .progress-bar {
+    height: 100%;
+    background: #3BCC00;
+    /* Minecraft Experience Bar Green */
+    box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.4);
+    transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .quiz-score-mini {
@@ -118,6 +131,9 @@
 
 .quiz-option.correct {
     background: var(--mc-emerald);
+    box-shadow:
+        inset -4px -4px 0 #008942,
+        inset 4px 4px 0 #4BFF9B;
     animation: correctPulse 0.5s ease;
 }
 
@@ -132,6 +148,9 @@
 
 .quiz-option.wrong {
     background: var(--mc-redstone);
+    box-shadow:
+        inset -4px -4px 0 #890000,
+        inset 4px 4px 0 #FF4B4B;
     animation: wrongShake 0.5s ease;
 }
 

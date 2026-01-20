@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import QuizGame from '../components/QuizGame';
 import MatchingGame from '../components/MatchingGame';
-import characters, { getRandomCharacters } from '../data/characters';
+import BattleGame from '../components/BattleGame';
+import characters, { getRandomCharacters, EXTENDED_CATEGORIES } from '../data/characters';
 import { markAsLearned, checkAndUnlockAchievements, unlockAchievement, ACHIEVEMENTS } from '../utils/storage';
 import './Games.css';
 
@@ -15,9 +16,14 @@ const Games = () => {
 
     const [gameType, setGameType] = useState(defaultType);
     const [gameKey, setGameKey] = useState(0); // 用于强制重新渲染游戏
-    const [gameCharacters, setGameCharacters] = useState(() =>
-        getRandomCharacters(20)
-    );
+    const [gameCharacters, setGameCharacters] = useState(() => {
+        // 优先获取考试分类的汉字
+        const examChars = characters.filter(c => c.category === EXTENDED_CATEGORIES.EXAM);
+        if (examChars.length >= 10) {
+            return [...examChars].sort(() => Math.random() - 0.5).slice(0, 20);
+        }
+        return getRandomCharacters(20);
+    });
 
     const handleGameComplete = (result) => {
         console.log('Game completed:', result);
@@ -39,7 +45,14 @@ const Games = () => {
 
     const startNewGame = (type) => {
         setGameType(type);
-        setGameCharacters(getRandomCharacters(20));
+
+        // 优先获取考试分类的汉字
+        const examChars = characters.filter(c => c.category === EXTENDED_CATEGORIES.EXAM);
+        const newChars = examChars.length >= 10
+            ? [...examChars].sort(() => Math.random() - 0.5).slice(0, 20)
+            : getRandomCharacters(20);
+
+        setGameCharacters(newChars);
         setGameKey(prev => prev + 1);
     };
 
@@ -52,6 +65,12 @@ const Games = () => {
 
             {/* 游戏类型选择 */}
             <div className="game-type-selector">
+                <button
+                    className={`mc-button ${gameType === 'battle' ? 'mc-button-gold' : ''}`}
+                    onClick={() => startNewGame('battle')}
+                >
+                    ⚔️ 对战模式
+                </button>
                 <button
                     className={`mc-button ${gameType === 'quiz' ? 'mc-button-primary' : ''}`}
                     onClick={() => startNewGame('quiz')}
@@ -74,6 +93,13 @@ const Games = () => {
 
             {/* 游戏区域 */}
             <div className="game-area">
+                {gameType === 'battle' && (
+                    <BattleGame
+                        key={`battle-${gameKey}`}
+                        onComplete={handleGameComplete}
+                    />
+                )}
+
                 {gameType === 'quiz' && (
                     <QuizGame
                         key={`quiz-${gameKey}`}
@@ -108,6 +134,13 @@ const Games = () => {
             {/* 游戏说明 */}
             <div className="game-instructions">
                 <h3 className="pixel-text">游戏说明</h3>
+                {gameType === 'battle' && (
+                    <ul>
+                        <li>⚔️ Steve vs Zombie 对战模式</li>
+                        <li>答对题目攻击敌人，答错会受到伤害</li>
+                        <li>消灭僵尸获得胜利！</li>
+                    </ul>
+                )}
                 {gameType === 'quiz' && (
                     <ul>
                         <li>根据拼音或释义选择正确的汉字</li>

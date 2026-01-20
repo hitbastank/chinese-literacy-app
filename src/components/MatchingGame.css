@@ -79,10 +79,15 @@
 }
 
 .matching-item.matched {
-    background: #6a5030;
-    border-color: #4a3020;
-    opacity: 0.9;
+    background: #5A8F3F;
+    /* Minecraft Grass/Green */
+    border-color: #2D4D1D;
+    box-shadow:
+        inset -4px -4px 0 #3D6B28,
+        inset 4px 4px 0 #8BE05F;
+    opacity: 1;
     pointer-events: none;
+    animation: matchPulse 0.4s ease;
 }
 
 .matching-item.wrong {
@@ -147,11 +152,14 @@
     position: absolute;
     left: 0;
     right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--mc-gold), #ffd700, var(--mc-gold));
-    box-shadow: 0 0 8px var(--mc-gold);
+    height: 6px;
+    background: #55FFFF;
+    /* Minecraft Diamond Cyan */
+    border: 2px solid #00AAAA;
+    box-shadow: 0 0 10px rgba(85, 255, 255, 0.5);
     transform-origin: left center;
     animation: lineAppear 0.3s ease;
+    z-index: 10;
 }
 
 /* Calculate line position based on item indices */

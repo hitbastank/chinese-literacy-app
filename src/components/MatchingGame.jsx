@@ -92,6 +92,9 @@ const MatchingGame = ({
             setSelectedLeft(null);
             setSelectedRight(null);
 
+            // 播放成功音效
+            speak('✓', { rate: 2.0, pitch: 1.5 });
+
             // 检查游戏是否完成
             if (newMatched.length === pairCount) {
                 setGameComplete(true);
@@ -100,12 +103,13 @@ const MatchingGame = ({
         } else {
             // 匹配失败
             setWrongPair({ left, right });
+            speak('✗', { rate: 2.0, pitch: 0.5 });
 
             setTimeout(() => {
                 setWrongPair(null);
                 setSelectedLeft(null);
                 setSelectedRight(null);
-            }, 800);
+            }, 600);
         }
     };
 

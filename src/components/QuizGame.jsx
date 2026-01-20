@@ -75,8 +75,11 @@ const QuizGame = ({
         if (isCorrect) {
             setScore(prev => prev + 1);
             onCorrect?.(questions[currentQuestion].correctAnswer);
+            // 播放成功音效 (如果有的话，这里可以集成更丰富的音效)
+            speak('✓', { rate: 2.0, pitch: 1.5 });
         } else {
             onWrong?.(questions[currentQuestion].correctAnswer);
+            speak('✗', { rate: 2.0, pitch: 0.5 });
         }
 
         // 延迟进入下一题
@@ -89,7 +92,7 @@ const QuizGame = ({
                 setGameComplete(true);
                 onComplete?.({ score: score + (isCorrect ? 1 : 0), total: questions.length });
             }
-        }, 1500);
+        }, 1200);
     };
 
     const playPronunciation = async () => {
@@ -97,7 +100,7 @@ const QuizGame = ({
 
         setIsPlaying(true);
         try {
-            await speak(questions[currentQuestion].correctAnswer.char, { rate: 0.6 });
+            await speak(questions[currentQuestion].correctAnswer.char, { rate: 0.5 });
         } catch (error) {
             console.error('播放失败:', error);
         } finally {
