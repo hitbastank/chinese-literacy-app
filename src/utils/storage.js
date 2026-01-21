@@ -7,16 +7,45 @@
  * - needsReview: 标记为不熟练的字 [char, ...]
  * 
  * 专属用户ID用于确保进度跨会话一致
+ * 支持 Firebase 云端同步
  */
+
+import { syncToCloud, loadFromCloud, isFirebaseConfigured } from '../firebase';
 
 // 专属用户ID - 用于持久化存储
 const USER_UID = 'user-mantou-2026';
+
+// 同步状态
+let syncStatus = 'idle'; // 'idle' | 'syncing' | 'synced' | 'error'
+let syncListeners = [];
 
 /**
  * 获取当前用户ID
  * @returns {string} 用户唯一标识符
  */
 export const getUserId = () => USER_UID;
+
+/**
+ * 获取同步状态
+ * @returns {string} 'idle' | 'syncing' | 'synced' | 'error'
+ */
+export const getSyncStatus = () => syncStatus;
+
+/**
+ * 订阅同步状态变化
+ * @param {function} listener 
+ */
+export const onSyncStatusChange = (listener) => {
+    syncListeners.push(listener);
+    return () => {
+        syncListeners = syncListeners.filter(l => l !== listener);
+    };
+};
+
+const notifySyncStatus = (status) => {
+    syncStatus = status;
+    syncListeners.forEach(l => l(status));
+};
 
 const STORAGE_KEYS = {
     PROGRESS: `${USER_UID}_chinese_literacy_progress`,
@@ -49,14 +78,77 @@ export const getProgress = () => {
     }
 };
 
-// 保存学习进度
+// 保存学习进度（同时同步到云端）
 export const saveProgress = (progress) => {
     try {
         localStorage.setItem(STORAGE_KEYS.PROGRESS, JSON.stringify(progress));
+
+        // 异步同步到云端
+        if (isFirebaseConfigured()) {
+            notifySyncStatus('syncing');
+            syncToCloud(USER_UID, { progress })
+                .then(success => {
+                    notifySyncStatus(success ? 'synced' : 'error');
+                })
+                .catch(() => {
+                    notifySyncStatus('error');
+                });
+        }
+
         return true;
     } catch (error) {
         console.error('保存进度失败:', error);
         return false;
+    }
+};
+
+/**
+ * 从云端加载并合并进度（应用启动时调用）
+ * @returns {Promise<object>} 合并后的进度
+ */
+export const initFromCloud = async () => {
+    if (!isFirebaseConfigured()) {
+        console.log('Firebase 未配置，使用本地数据');
+        return getProgress();
+    }
+
+    notifySyncStatus('syncing');
+    try {
+        const cloudData = await loadFromCloud(USER_UID);
+        const localProgress = getProgress();
+
+        if (cloudData && cloudData.progress) {
+            // 合并策略：取学习次数和已学会字数更多的版本
+            const cloudProgress = cloudData.progress;
+            const localStudiedCount = Object.keys(localProgress.studied || {}).length;
+            const cloudStudiedCount = Object.keys(cloudProgress.studied || {}).length;
+
+            let mergedProgress;
+            if (cloudStudiedCount >= localStudiedCount) {
+                // 云端数据更完整，使用云端
+                mergedProgress = { ...localProgress, ...cloudProgress };
+                console.log('☁️ 使用云端数据（更完整）');
+            } else {
+                // 本地数据更完整，保留本地并上传
+                mergedProgress = localProgress;
+                console.log('💾 本地数据更完整，上传到云端');
+                await syncToCloud(USER_UID, { progress: localProgress });
+            }
+
+            // 保存合并后的数据到本地
+            localStorage.setItem(STORAGE_KEYS.PROGRESS, JSON.stringify(mergedProgress));
+            notifySyncStatus('synced');
+            return mergedProgress;
+        } else {
+            // 云端无数据，上传本地数据
+            await syncToCloud(USER_UID, { progress: localProgress });
+            notifySyncStatus('synced');
+            return localProgress;
+        }
+    } catch (error) {
+        console.error('云端同步失败:', error);
+        notifySyncStatus('error');
+        return getProgress();
     }
 };
 

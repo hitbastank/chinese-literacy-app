@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import QuizGame from '../components/QuizGame';
 import MatchingGame from '../components/MatchingGame';
 import BattleGame from '../components/BattleGame';
@@ -9,12 +9,23 @@ import './Games.css';
 
 /**
  * 游戏页面
+ * 支持 URL 路由：/games/fight, /games/quiz, /games/match, /games/meaning
  */
 const Games = () => {
-    const [searchParams] = useSearchParams();
-    const defaultType = searchParams.get('type') || 'quiz';
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    const [gameType, setGameType] = useState(defaultType);
+    // 根据 URL 路径确定游戏类型
+    const getGameTypeFromPath = () => {
+        const path = location.pathname;
+        if (path.includes('/games/fight')) return 'battle';
+        if (path.includes('/games/quiz')) return 'quiz';
+        if (path.includes('/games/match')) return 'matching';
+        if (path.includes('/games/meaning')) return 'matching-meaning';
+        return 'battle'; // 默认显示对战模式
+    };
+
+    const [gameType, setGameType] = useState(getGameTypeFromPath);
     const [gameKey, setGameKey] = useState(0); // 用于强制重新渲染游戏
     const [gameCharacters, setGameCharacters] = useState(() => {
         // 优先获取考试分类的汉字
@@ -24,6 +35,11 @@ const Games = () => {
         }
         return getRandomCharacters(20);
     });
+
+    // 监听 URL 变化
+    useEffect(() => {
+        setGameType(getGameTypeFromPath());
+    }, [location.pathname]);
 
     const handleGameComplete = (result) => {
         console.log('Game completed:', result);
@@ -44,7 +60,14 @@ const Games = () => {
     };
 
     const startNewGame = (type) => {
-        setGameType(type);
+        // 更新 URL
+        const urlMap = {
+            'battle': '/games/fight',
+            'quiz': '/games/quiz',
+            'matching': '/games/match',
+            'matching-meaning': '/games/meaning'
+        };
+        navigate(urlMap[type] || '/games/fight');
 
         // 优先获取考试分类的汉字
         const examChars = characters.filter(c => c.category === EXTENDED_CATEGORIES.EXAM);

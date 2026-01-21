@@ -45,7 +45,11 @@ const BattleGame = ({ onComplete }) => {
         if (selectedAnswer !== null || gameState !== 'playing') return;
 
         const currentQuestion = questions[currentQuestionIndex];
+        const clickedChar = currentQuestion.options[optionIndex];
         const isCorrect = optionIndex === currentQuestion.answer;
+
+        // 朗读点击的汉字
+        speak(clickedChar, { rate: 0.7 });
 
         setSelectedAnswer(optionIndex);
         setFeedback(isCorrect ? 'correct' : 'wrong');
