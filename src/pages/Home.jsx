@@ -77,10 +77,10 @@ const Home = () => {
                         <p className="feature-desc">分级课程，Minecraft主题</p>
                     </Link>
 
-                    <Link to="/learn?mode=stroke" className="feature-card">
-                        <div className="feature-icon">✍️</div>
-                        <h3 className="feature-title">笔顺学习</h3>
-                        <p className="feature-desc">学习正确的书写笔顺</p>
+                    <Link to="/learn" className="feature-card">
+                        <div className="feature-icon">🃏</div>
+                        <h3 className="feature-title">闪卡学习</h3>
+                        <p className="feature-desc">翻卡片学汉字拼音</p>
                     </Link>
 
                     <Link to="/games?type=quiz" className="feature-card">

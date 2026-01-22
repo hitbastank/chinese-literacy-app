@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { getStats, getSyncStatus, onSyncStatusChange } from '../utils/storage';
 import { isFirebaseConfigured } from '../firebase';
 import './Navbar.css';
@@ -29,11 +29,7 @@ const Navbar = () => {
     return (
         <nav className="navbar">
             <div className="navbar-inner">
-                <div className="navbar-logo">
-                    <span className="navbar-icon">📚</span>
-                    <h1>识字冒险</h1>
-                </div>
-
+                {/* 左侧：导航按钮 */}
                 <ul className="navbar-nav">
                     <li>
                         <NavLink
@@ -45,30 +41,20 @@ const Navbar = () => {
                     </li>
                     <li>
                         <NavLink
-                            to="/learn"
-                            className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}
-                        >
-                            学习
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink
                             to="/games"
                             className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}
                         >
                             游戏
                         </NavLink>
                     </li>
-                    <li>
-                        <NavLink
-                            to="/progress"
-                            className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}
-                        >
-                            进度
-                        </NavLink>
-                    </li>
                 </ul>
 
+                {/* 中间：Logo居中 */}
+                <div className="navbar-logo">
+                    <img src="/logo.png" alt="IAN CHINESE" className="navbar-logo-img" />
+                </div>
+
+                {/* 右侧：进度数字（可点击查看进度） */}
                 <div className="navbar-stats">
                     {getSyncIcon() && (
                         <span className={`sync-indicator ${syncStatus}`} title={
@@ -79,10 +65,10 @@ const Navbar = () => {
                             {getSyncIcon()}
                         </span>
                     )}
-                    <span className="stat-badge">
+                    <Link to="/progress" className="stat-badge" title="查看学习进度">
                         <span className="stat-icon">⭐</span>
                         <span className="stat-value">{stats.learnedCount}</span>
-                    </span>
+                    </Link>
                 </div>
             </div>
         </nav>

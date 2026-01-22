@@ -400,97 +400,9 @@ h3 {
 }
 
 /* ========================================
-   Navigation Bar - Green Pixel Texture
+   Navigation Bar - Clean Solid Background
    ======================================== */
-.navbar {
-    background-color: var(--mc-grass-green);
-    background-image:
-        /* Pixel grid pattern */
-        linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-        /* Grass texture variation */
-        linear-gradient(45deg, var(--mc-grass-dark) 25%, transparent 25%),
-        linear-gradient(-45deg, var(--mc-grass-dark) 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, var(--mc-grass-light) 75%),
-        linear-gradient(-45deg, transparent 75%, var(--mc-grass-light) 75%);
-    background-size:
-        8px 8px,
-        8px 8px,
-        16px 16px,
-        16px 16px,
-        16px 16px,
-        16px 16px;
-    background-position:
-        0 0,
-        0 0,
-        0 0,
-        8px 0,
-        8px -8px,
-        0 8px;
-    border-bottom: var(--pixel-size) solid var(--mc-border);
-    padding: var(--spacing-md) var(--spacing-xl);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow:
-        inset 0 -6px 0 var(--mc-grass-dark),
-        inset 0 6px 0 rgba(255, 255, 255, 0.15);
-}
-
-.navbar-container {
-    width: 100%;
-    max-width: var(--max-content-width);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.navbar-logo {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-}
-
-.navbar-logo h1 {
-    font-size: 1.5rem;
-    color: var(--mc-primary);
-    text-shadow: 2px 2px 0 var(--mc-text-shadow);
-}
-
-.navbar-nav {
-    display: flex;
-    gap: var(--spacing-sm);
-    list-style: none;
-}
-
-.navbar-link {
-    font-family: var(--font-ui);
-    font-size: 1rem;
-    color: var(--mc-text-light);
-    text-decoration: none;
-    padding: var(--spacing-xs) var(--spacing-md);
-    background-color: var(--mc-tertiary);
-    background-image:
-        linear-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
-    background-size: 4px 4px;
-    border: 3px solid var(--mc-border);
-    text-shadow: 1px 1px 0 var(--mc-text-shadow);
-    box-shadow:
-        inset -3px -3px 0 var(--mc-tertiary-dark),
-        inset 3px 3px 0 rgba(255, 255, 255, 0.3);
-    transition: all 0.1s ease;
-}
-
-.navbar-link:hover,
-.navbar-link.active {
-    background-color: var(--mc-primary);
-    color: var(--mc-text-dark);
-    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3);
-    box-shadow:
-        inset -3px -3px 0 var(--mc-primary-dark),
-        inset 3px 3px 0 rgba(255, 255, 255, 0.4);
-}
+/* navbar 样式已移至 Navbar.css，请勿在此处定义 */
 
 /* ========================================
    Progress Bar - XP Style
@@ -986,16 +898,7 @@ h3 {
         font-size: 6rem;
     }
 
-    .navbar {
-        flex-direction: column;
-        gap: var(--spacing-sm);
-        padding: var(--spacing-sm);
-    }
-
-    .navbar-nav {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
+    /* navbar responsive styles moved to Navbar.css */
 
     .hero-title {
         font-size: 1.5rem;
