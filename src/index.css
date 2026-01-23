@@ -96,7 +96,7 @@ html {
 body {
     font-family: var(--font-chinese);
     background-color: var(--mc-dirt-brown);
-    background-image: url('/background.png');
+    background-image: url('/background_hd.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
