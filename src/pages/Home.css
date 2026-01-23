@@ -148,7 +148,7 @@
 .progress-container {
     width: 100%;
     max-width: 400px;
-    height: 24px;
+    height: 32px;
     background: rgba(0, 0, 0, 0.3);
     border: 2px solid rgba(255, 255, 255, 0.15);
     border-radius: 12px;
