@@ -1,14 +1,17 @@
 /* Games Page Styles */
 
 .games-page {
-    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    padding-bottom: 100px;
+    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.page-subtitle {
-    font-family: var(--font-chinese);
-    font-size: 1rem;
-    color: var(--mc-text-dark);
-    margin-top: var(--spacing-xs);
+/* 标题+选择模块 */
+.games-header-module {
+    text-align: center;
 }
 
 /* Game Type Selector */
@@ -17,33 +20,50 @@
     gap: var(--spacing-sm);
     flex-wrap: wrap;
     justify-content: center;
+    margin-top: var(--spacing-md);
 }
 
-.game-type-selector .mc-button {
-    font-size: 0.65rem;
+.game-type-btn {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-/* Game Area */
+.game-type-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.game-type-btn.active {
+    background: rgba(76, 175, 80, 0.4);
+    border-color: rgba(76, 175, 80, 0.6);
+    color: #7ccea9;
+}
+
+/* 游戏区域模块 */
+.game-area-module {
+    padding: var(--spacing-md);
+}
+
 .game-area {
     display: flex;
     justify-content: center;
     width: 100%;
 }
 
-/* Game Instructions */
-.game-instructions {
-    background: var(--mc-wood-brown);
-    border: 4px solid var(--mc-border);
-    padding: var(--spacing-lg);
-    max-width: 500px;
-    box-shadow:
-        inset -4px -4px 0 var(--mc-wood-dark),
-        inset 4px 4px 0 rgba(255, 255, 255, 0.2);
+/* 游戏说明模块 */
+.game-info-module {
+    text-align: center;
 }
 
-.game-instructions h3 {
-    font-size: 0.7rem;
-    color: var(--mc-gold);
+.game-instructions {
+    text-align: left;
     margin-bottom: var(--spacing-md);
 }
 
@@ -56,17 +76,17 @@
 .game-instructions li {
     font-family: var(--font-chinese);
     font-size: 0.9rem;
-    color: var(--mc-text-light);
+    color: #fff;
     padding: var(--spacing-xs) 0;
-    padding-left: var(--spacing-md);
+    padding-left: var(--spacing-lg);
     position: relative;
 }
 
 .game-instructions li::before {
     content: '▸';
     position: absolute;
-    left: 0;
-    color: var(--mc-grass-green);
+    left: var(--spacing-sm);
+    color: #7ccea9;
 }
 
 /* Game Actions */
@@ -81,12 +101,8 @@
         gap: var(--spacing-xs);
     }
 
-    .game-type-selector .mc-button {
-        font-size: 0.55rem;
+    .game-type-btn {
+        font-size: 0.75rem;
         padding: var(--spacing-xs) var(--spacing-sm);
-    }
-
-    .game-instructions {
-        padding: var(--spacing-md);
     }
 }

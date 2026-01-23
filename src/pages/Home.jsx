@@ -4,7 +4,7 @@ import characters, { getTotalCount, getCategoryStats } from '../data/characters'
 import './Home.css';
 
 /**
- * 首页
+ * 首页 - 模块化布局
  */
 const Home = () => {
     const stats = getStats();
@@ -13,21 +13,17 @@ const Home = () => {
 
     return (
         <div className="page-container home-page">
-            {/* Hero区域 */}
-            <section className="hero">
+            {/* 模块1: 标题 + 主按钮 */}
+            <section className="glass-module hero-module">
                 <div className="hero-mascot">
-                    <div className="mascot-pixel">
-                        🎓
-                    </div>
+                    <div className="mascot-pixel">🎓</div>
                 </div>
-
                 <h1 className="hero-title pixel-text">识字冒险</h1>
                 <p className="hero-subtitle">
                     和小伙伴一起，开启有趣的汉字学习之旅！
                     <br />
                     像玩游戏一样轻松学会 {totalChars} 个常用汉字
                 </p>
-
                 <div className="hero-buttons">
                     <Link to="/curriculum" className="mc-button mc-button-primary">
                         📚 课程学习
@@ -38,9 +34,9 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* 进度概览 */}
-            <section className="home-section">
-                <h2 className="section-title pixel-text">📊 我的进度</h2>
+            {/* 模块2: 我的进度 */}
+            <section className="glass-module progress-module">
+                <h2 className="module-title">📊 我的进度</h2>
                 <div className="stats-overview">
                     <div className="stat-card highlight">
                         <div className="stat-value">{stats.learnedCount}</div>
@@ -55,7 +51,6 @@ const Home = () => {
                         <div className="stat-label">总汉字数</div>
                     </div>
                 </div>
-
                 <div className="progress-preview">
                     <div className="progress-container">
                         <div
@@ -67,28 +62,25 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* 功能模块 */}
-            <section className="home-section">
-                <h2 className="section-title pixel-text">🚀 学习模块</h2>
+            {/* 模块3: 学习模块 */}
+            <section className="glass-module learning-module">
+                <h2 className="module-title">🚀 学习模块</h2>
                 <div className="feature-grid">
                     <Link to="/curriculum" className="feature-card highlight">
                         <div className="feature-icon">📚</div>
                         <h3 className="feature-title">课程学习</h3>
                         <p className="feature-desc">分级课程，Minecraft主题</p>
                     </Link>
-
                     <Link to="/learn" className="feature-card">
                         <div className="feature-icon">🃏</div>
                         <h3 className="feature-title">闪卡学习</h3>
                         <p className="feature-desc">翻卡片学汉字拼音</p>
                     </Link>
-
                     <Link to="/games?type=quiz" className="feature-card">
                         <div className="feature-icon">❓</div>
                         <h3 className="feature-title">选择题</h3>
                         <p className="feature-desc">测试学习成果</p>
                     </Link>
-
                     <Link to="/games?type=matching" className="feature-card">
                         <div className="feature-icon">🔗</div>
                         <h3 className="feature-title">连线游戏</h3>
@@ -97,26 +89,23 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* 分类展示 */}
-            <section className="home-section">
-                <h2 className="section-title pixel-text">📚 汉字分类</h2>
-                <div className="category-preview">
-                    {Object.entries(categoryStats).slice(0, 6).map(([category, count]) => (
-                        <div key={category} className="category-item">
-                            <span className="category-name">{category}</span>
-                            <span className="category-count">{count}个</span>
-                        </div>
+            {/* Footer: 汉字分类 + 提示 */}
+            <footer className="home-footer">
+                <div className="footer-categories">
+                    <span className="footer-label">汉字分类：</span>
+                    {Object.entries(categoryStats).slice(0, 6).map(([category, count], index) => (
+                        <span key={category}>
+                            <Link to={`/learn?category=${encodeURIComponent(category)}`} className="footer-link">
+                                {category}({count})
+                            </Link>
+                            {index < 5 && <span className="footer-separator">·</span>}
+                        </span>
                     ))}
                 </div>
-            </section>
-
-            {/* 底部提示 */}
-            <section className="home-tip">
-                <div className="tip-content">
-                    <span className="tip-icon">💡</span>
-                    <p className="pixel-text">提示: 每天学习10个新字，坚持就是胜利！</p>
+                <div className="footer-tip">
+                    💡 提示：每天学习10个新字，坚持就是胜利！
                 </div>
-            </section>
+            </footer>
         </div>
     );
 };

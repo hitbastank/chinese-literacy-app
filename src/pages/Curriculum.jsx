@@ -31,72 +31,79 @@ const Curriculum = () => {
 
     return (
         <div className="page-container curriculum-page">
-            <div className="page-title">
-                <h1 className="pixel-text">📚 课程目录</h1>
-                <p className="page-subtitle">选择难度级别，开始你的识字冒险！</p>
-            </div>
+            {/* 标题模块 */}
+            <section className="glass-module title-module">
+                <div className="page-title-glass">
+                    <h1 className="pixel-text">📚 课程目录</h1>
+                    <p className="page-subtitle">选择难度级别，开始你的识字冒险！</p>
+                </div>
+            </section>
 
-            <div className="levels-container">
-                {levels.map(levelConfig => {
-                    const style = levelStyles[levelConfig.level];
-                    const lessons = getLessonsByLevel(levelConfig.level);
-                    const isExpanded = expandedLevel === levelConfig.level;
+            {/* 课程列表模块 */}
+            <section className="glass-module levels-module">
+                <div className="levels-container">
+                    {levels.map(levelConfig => {
+                        const style = levelStyles[levelConfig.level];
+                        const lessons = getLessonsByLevel(levelConfig.level);
+                        const isExpanded = expandedLevel === levelConfig.level;
 
-                    return (
-                        <div
-                            key={levelConfig.level}
-                            className={`level-card ${isExpanded ? 'expanded' : ''}`}
-                        >
+                        return (
                             <div
-                                className="level-header"
-                                onClick={() => toggleLevel(levelConfig.level)}
-                                style={{ background: style.gradient }}
+                                key={levelConfig.level}
+                                className={`level-card ${isExpanded ? 'expanded' : ''}`}
                             >
-                                <div className="level-icon">{style.icon}</div>
-                                <div className="level-info">
-                                    <h2 className="level-title pixel-text">
-                                        第{levelConfig.level}级 · {levelConfig.title}
-                                    </h2>
-                                    <p className="level-description">{levelConfig.description}</p>
-                                    <div className="level-meta">
-                                        <span className="chars-count">每课 {levelConfig.charsPerLesson} 字</span>
-                                        <span className="lessons-count">{lessons.length} 课</span>
+                                <div
+                                    className="level-header"
+                                    onClick={() => toggleLevel(levelConfig.level)}
+                                    style={{ background: style.gradient }}
+                                >
+                                    <div className="level-icon">{style.icon}</div>
+                                    <div className="level-info">
+                                        <h2 className="level-title pixel-text">
+                                            第{levelConfig.level}级 · {levelConfig.title}
+                                        </h2>
+                                        <p className="level-description">{levelConfig.description}</p>
+                                        <div className="level-meta">
+                                            <span className="chars-count">每课 {levelConfig.charsPerLesson} 字</span>
+                                            <span className="lessons-count">{lessons.length} 课</span>
+                                        </div>
+                                    </div>
+                                    <div className="level-expand-icon">
+                                        {isExpanded ? '▼' : '▶'}
                                     </div>
                                 </div>
-                                <div className="level-expand-icon">
-                                    {isExpanded ? '▼' : '▶'}
-                                </div>
+
+                                {isExpanded && (
+                                    <div className="lessons-list">
+                                        {lessons.length > 0 ? (
+                                            lessons.map(lesson => (
+                                                <Link
+                                                    key={lesson.id}
+                                                    to={`/lesson/${lesson.id}`}
+                                                    className="lesson-item"
+                                                >
+                                                    <span className="lesson-id">{lesson.id}</span>
+                                                    <span className="lesson-title">{lesson.title}</span>
+                                                    <span className="lesson-chars-count">
+                                                        {lesson.characters.length} 字
+                                                    </span>
+                                                    <span className="lesson-arrow">→</span>
+                                                </Link>
+                                            ))
+                                        ) : (
+                                            <div className="no-lessons">
+                                                <span className="pixel-text">🚧 课程开发中...</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
+                        );
+                    })}
+                </div>
+            </section>
 
-                            {isExpanded && (
-                                <div className="lessons-list">
-                                    {lessons.length > 0 ? (
-                                        lessons.map(lesson => (
-                                            <Link
-                                                key={lesson.id}
-                                                to={`/lesson/${lesson.id}`}
-                                                className="lesson-item"
-                                            >
-                                                <span className="lesson-id">{lesson.id}</span>
-                                                <span className="lesson-title">{lesson.title}</span>
-                                                <span className="lesson-chars-count">
-                                                    {lesson.characters.length} 字
-                                                </span>
-                                                <span className="lesson-arrow">→</span>
-                                            </Link>
-                                        ))
-                                    ) : (
-                                        <div className="no-lessons">
-                                            <span className="pixel-text">🚧 课程开发中...</span>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    );
-                })}
-            </div>
-
+            {/* 返回按钮 */}
             <div className="curriculum-footer">
                 <Link to="/" className="mc-button">
                     ◀ 返回首页

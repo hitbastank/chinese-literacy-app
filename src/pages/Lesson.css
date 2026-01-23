@@ -1,29 +1,38 @@
 /* 课程学习页面样式 */
 
 .lesson-page {
+    padding: var(--spacing-lg);
     padding-bottom: 120px;
+    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* 课程头部 */
+/* 课程头部 - 毛玻璃样式 */
 .lesson-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px;
-    background: var(--mc-stone);
-    border-bottom: 4px solid var(--mc-dark);
-    margin-bottom: 24px;
+    padding: 16px 20px;
+    background: rgba(30, 30, 30, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 720px;
 }
 
 .back-link {
-    color: var(--mc-text-secondary);
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
     font-size: 0.9rem;
     transition: color 0.2s;
 }
 
 .back-link:hover {
-    color: var(--mc-grass);
+    color: #7ccea9;
 }
 
 /* 标题不用投影 */
@@ -34,17 +43,23 @@
 }
 
 .lesson-progress {
-    background: var(--mc-dark);
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    color: var(--mc-gold);
 }
 
-/* 主学习区域 */
+/* 主学习区域 - 毛玻璃模块 */
 .lesson-main {
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 0 16px;
+    background: rgba(30, 30, 30, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: var(--spacing-xl);
+    width: 100%;
+    max-width: 720px;
     text-align: center;
 }
 
@@ -283,8 +298,8 @@
 
 /* 汉字详情 */
 .char-details {
-    background: #666;
-    border: 4px solid #555;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     padding: 16px;
     margin-top: 20px;
@@ -295,7 +310,7 @@
     align-items: flex-start;
     gap: 12px;
     padding: 12px 16px;
-    background: #777;
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
     margin-bottom: 8px;
 }
@@ -308,10 +323,10 @@
     min-width: 90px;
     max-width: 90px;
     padding: 4px 8px;
-    background: #555;
+    background: rgba(255, 215, 0, 0.2);
     border-radius: 4px;
     font-size: 0.85rem;
-    color: #ffd700;
+    color: var(--mc-gold);
     text-align: center;
     font-weight: 600;
     flex-shrink: 0;
@@ -423,17 +438,22 @@
     cursor: not-allowed;
 }
 
-/* 快速跳转导航 */
+/* 快速跳转导航 - 毛玻璃模块 */
 .quick-nav-section {
-    max-width: 600px;
-    margin: 40px auto 0;
-    padding: 0 16px;
+    background: rgba(30, 30, 30, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: var(--spacing-lg);
+    width: 100%;
+    max-width: 720px;
 }
 
 .quick-nav-section h3 {
     text-align: center;
     margin-bottom: 16px;
-    color: #ccc;
+    color: var(--mc-gold);
     text-shadow: none;
 }
 
@@ -450,8 +470,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--mc-stone);
-    border: 3px solid var(--mc-border);
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.15);
     border-radius: 8px;
     font-size: 1.4rem;
     color: white;
@@ -460,8 +480,8 @@
 }
 
 .quick-nav-char:hover {
-    background: var(--mc-grass);
-    border-color: var(--mc-grass-dark);
+    background: rgba(76, 175, 80, 0.3);
+    border-color: rgba(76, 175, 80, 0.5);
     transform: scale(1.1);
 }
 
@@ -488,14 +508,20 @@
     opacity: 1;
 }
 
-/* 课程导航 */
+/* 课程导航 - 毛玻璃模块 */
 .lesson-nav-section {
+    background: rgba(30, 30, 30, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: var(--spacing-lg);
+    width: 100%;
+    max-width: 720px;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 16px;
-    margin-top: 40px;
-    padding: 0 16px;
     flex-wrap: wrap;
 }
 

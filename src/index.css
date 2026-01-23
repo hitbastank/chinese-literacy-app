@@ -96,34 +96,56 @@ html {
 body {
     font-family: var(--font-chinese);
     background-color: var(--mc-dirt-brown);
-    background-image:
-        /* Pixel grid overlay */
-        linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-        /* Noise texture simulation */
-        radial-gradient(ellipse at 20% 30%, var(--mc-dirt-light) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 70%, var(--mc-dirt-dark) 0%, transparent 50%),
-        radial-gradient(ellipse at 40% 80%, rgba(107, 68, 35, 0.5) 0%, transparent 40%),
-        radial-gradient(ellipse at 60% 20%, rgba(160, 105, 79, 0.5) 0%, transparent 40%),
-        /* Stone/gravel spots */
-        radial-gradient(circle at 15% 45%, #6B6B6B 0%, transparent 3%),
-        radial-gradient(circle at 85% 55%, #7F7F7F 0%, transparent 2%),
-        radial-gradient(circle at 45% 90%, #5F5F5F 0%, transparent 3%),
-        radial-gradient(circle at 70% 15%, #6B6B6B 0%, transparent 2%);
-    background-size:
-        16px 16px,
-        16px 16px,
-        100% 100%,
-        100% 100%,
-        100% 100%,
-        100% 100%,
-        100% 100%,
-        100% 100%,
-        100% 100%,
-        100% 100%;
+    background-image: url('/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     min-height: 100vh;
     color: var(--mc-text-dark);
     overflow-x: hidden;
+}
+
+/* ========================================
+   Glass Module - 毛玻璃模块公共样式
+   ======================================== */
+.glass-module {
+    background: rgba(30, 30, 30, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: var(--spacing-xl);
+    width: 100%;
+    max-width: 720px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.module-title {
+    font-family: var(--font-ui);
+    font-size: 1.1rem;
+    color: var(--mc-gold);
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+    margin: 0 0 var(--spacing-lg) 0;
+    text-align: center;
+}
+
+.page-title-glass {
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.page-title-glass h1 {
+    font-size: 1.8rem;
+    color: var(--mc-gold);
+    text-shadow: 3px 3px 0 var(--mc-text-shadow);
+    margin: 0;
+}
+
+.page-title-glass .page-subtitle {
+    font-size: 1rem;
+    color: #fff;
+    margin-top: var(--spacing-sm);
 }
 
 /* ========================================
@@ -640,7 +662,7 @@ h3 {
 .hero-subtitle {
     font-family: var(--font-chinese);
     font-size: 1.2rem;
-    color: var(--mc-text-dark);
+    color: #fff;
     margin-bottom: var(--spacing-xl);
 }
 
