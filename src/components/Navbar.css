@@ -24,9 +24,10 @@
     align-items: center;
     width: 100%;
     max-width: 720px;
-    height: 96px;
+    height: 100%;
     /* match navbar height */
     position: relative;
+    overflow: visible;
 }
 
 .navbar-logo {
@@ -37,7 +38,7 @@
     transform: translateX(-50%);
     display: flex;
     align-items: center;
-    z-index: 10;
+    z-index: 1000;
 }
 
 .navbar-logo-img {
