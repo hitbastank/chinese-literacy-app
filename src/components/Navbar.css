@@ -32,9 +32,8 @@
 .navbar-logo {
     position: absolute;
     left: 50%;
-    bottom: -12px;
-    /* 伸出导航栏16px */
-    transform: translateX(-50%);
+    top: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
     z-index: 10;
