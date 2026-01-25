@@ -144,6 +144,18 @@
     color: #f44336;
 }
 
+.chinese-badge:hover {
+    background: rgba(255, 215, 0, 0.15);
+    /* Gold tint for Chinese */
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.english-badge:hover {
+    background: rgba(100, 149, 237, 0.15);
+    /* Blue tint for English */
+    border: 1px solid rgba(100, 149, 237, 0.3);
+}
+
 @keyframes spin {
     from {
         transform: rotate(0deg);

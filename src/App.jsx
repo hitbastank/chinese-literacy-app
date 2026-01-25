@@ -7,6 +7,7 @@ import Games from './pages/Games';
 import Progress from './pages/Progress';
 import Curriculum from './pages/Curriculum';
 import Lesson from './pages/Lesson';
+import English from './pages/English';
 import { initFromCloud } from './utils/storage';
 
 /**
@@ -31,6 +32,7 @@ function App() {
                     <Route path="/progress" element={<Progress />} />
                     <Route path="/curriculum" element={<Curriculum />} />
                     <Route path="/lesson/:lessonId" element={<Lesson />} />
+                    <Route path="/english" element={<English />} />
                 </Routes>
             </main>
         </div>

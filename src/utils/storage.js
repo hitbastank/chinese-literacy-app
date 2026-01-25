@@ -300,8 +300,19 @@ export const isNeedsReview = (char) => {
 // 获取学习统计
 export const getStats = () => {
     const progress = getProgress();
+
+    // Separate Chinese and English mastered items
+    // Chinese characters range: [\u4e00-\u9fa5]
+    const chineseRegex = /[\u4e00-\u9fa5]/;
+
+    const masteredItems = progress.mastered || progress.learned || [];
+    const chineseLearnedCount = masteredItems.filter(item => chineseRegex.test(item)).length;
+    const englishLearnedCount = masteredItems.filter(item => !chineseRegex.test(item)).length;
+
     return {
-        learnedCount: progress.mastered.length || progress.learned.length, // 优先使用新版
+        learnedCount: masteredItems.length, // Total
+        chineseLearnedCount,
+        englishLearnedCount,
         inProgressCount: progress.inProgress.length,
         reviewCount: progress.needsReview.length,
         totalStudyTime: progress.totalStudyTime,

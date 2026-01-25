@@ -65,9 +65,15 @@ const Navbar = () => {
                             {getSyncIcon()}
                         </span>
                     )}
-                    <Link to="/progress" className="stat-badge" title="查看学习进度">
-                        <span className="stat-icon">⭐</span>
-                        <span className="stat-value">{stats.learnedCount}</span>
+
+                    <Link to="/curriculum" className="stat-badge chinese-badge" title="汉字学习进度">
+                        <span className="stat-icon">🇨🇳</span>
+                        <span className="stat-value">{stats.chineseLearnedCount}</span>
+                    </Link>
+
+                    <Link to="/english" className="stat-badge english-badge" title="English Progress">
+                        <span className="stat-icon">🇬🇧</span>
+                        <span className="stat-value">{stats.englishLearnedCount}</span>
                     </Link>
                 </div>
             </div>

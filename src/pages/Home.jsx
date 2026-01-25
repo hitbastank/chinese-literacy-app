@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { getStats } from '../utils/storage';
-import characters, { getTotalCount, getCategoryStats } from '../data/characters';
+import charData, { getTotalCount as getTotalChineseCount, getCategoryStats } from '../data/characters';
+import { getTotalCount as getTotalEnglishCount } from '../data/englishWords';
 import './Home.css';
 
 /**
@@ -8,8 +9,13 @@ import './Home.css';
  */
 const Home = () => {
     const stats = getStats();
-    const totalChars = getTotalCount();
+    const totalChineseChars = getTotalChineseCount();
+    const totalEnglishWords = getTotalEnglishCount();
     const categoryStats = getCategoryStats();
+
+    // Calculate percentages
+    const chinesePercent = Math.round((stats.chineseLearnedCount / totalChineseChars) * 100);
+    const englishPercent = Math.round((stats.englishLearnedCount / totalEnglishWords) * 100);
 
     return (
         <div className="page-container home-page">
@@ -22,14 +28,14 @@ const Home = () => {
                 <p className="hero-subtitle">
                     和小伙伴一起，开启有趣的汉字学习之旅！
                     <br />
-                    像玩游戏一样轻松学会 {totalChars} 个常用汉字
+                    像玩游戏一样轻松学会常用汉字和英语单词
                 </p>
                 <div className="hero-buttons">
                     <Link to="/curriculum" className="mc-button mc-button-primary">
-                        📚 课程学习
+                        📚 汉字学习
                     </Link>
-                    <Link to="/games" className="mc-button mc-button-gold">
-                        🔄 复习
+                    <Link to="/english" className="mc-button mc-button-gold">
+                        📖 English Learning
                     </Link>
                 </div>
             </section>
@@ -40,24 +46,39 @@ const Home = () => {
                 <div className="stats-overview">
                     <div className="stat-card highlight">
                         <div className="stat-value">{stats.learnedCount}</div>
-                        <div className="stat-label">已学会</div>
+                        <div className="stat-label">总学会</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-value">{stats.streakDays}</div>
                         <div className="stat-label">连续天数</div>
                     </div>
-                    <div className="stat-card">
-                        <div className="stat-value">{totalChars}</div>
-                        <div className="stat-label">总汉字数</div>
-                    </div>
                 </div>
-                <div className="progress-preview">
+
+                {/* Chinese Progress */}
+                <div className="progress-section">
                     <div className="progress-container">
                         <div
-                            className="progress-bar"
-                            style={{ width: `${Math.round((stats.learnedCount / totalChars) * 100)}%` }}
-                            data-progress={`${Math.round((stats.learnedCount / totalChars) * 100)}%`}
+                            className="progress-bar chinese-bar"
+                            style={{ width: `${chinesePercent}%` }}
                         />
+                        <div className="progress-info-overlay">
+                            <span className="progress-label">🇨🇳 汉字 ({stats.chineseLearnedCount}/{totalChineseChars})</span>
+                            <span className="progress-percent">{chinesePercent}%</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* English Progress */}
+                <div className="progress-section">
+                    <div className="progress-container">
+                        <div
+                            className="progress-bar english-bar"
+                            style={{ width: `${englishPercent}%` }}
+                        />
+                        <div className="progress-info-overlay">
+                            <span className="progress-label">🇬🇧 English ({stats.englishLearnedCount}/{totalEnglishWords})</span>
+                            <span className="progress-percent">{englishPercent}%</span>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -68,7 +89,7 @@ const Home = () => {
                 <div className="feature-grid">
                     <Link to="/curriculum" className="feature-card highlight">
                         <div className="feature-icon">📚</div>
-                        <h3 className="feature-title">课程学习</h3>
+                        <h3 className="feature-title">汉字学习</h3>
                         <p className="feature-desc">分级课程，Minecraft主题</p>
                     </Link>
                     <Link to="/learn" className="feature-card">

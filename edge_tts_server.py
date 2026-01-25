@@ -19,8 +19,8 @@ from aiohttp import web
 import io
 import hashlib
 
-# 默认语音 - 晓伊（卡通女声，活泼可爱，适合儿童）
-DEFAULT_VOICE = "zh-CN-XiaoyiNeural"
+# 默认语音 - 晓晓（活泼可爱的女童声，适合儿童学习）
+DEFAULT_VOICE = "zh-CN-XiaoxiaoNeural"
 
 # 服务端口
 PORT = 8766
