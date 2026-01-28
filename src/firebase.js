@@ -31,11 +31,28 @@ const getEnvironmentInfo = () => {
     if (typeof window === 'undefined') return { isDev: true, collectionName: 'dev_users' };
 
     const hostname = window.location.hostname;
-    // 判断是否为开发环境 (localhost 或 vercel.app 预览环境)
-    const isDev = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.includes('vercel.app');
+
+    // 明确的开发环境
+    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+
+    // Vercel 预览部署的特征：
+    // - 预览 URL 格式: {project}-{unique-hash}-{username}.vercel.app
+    // - 预览 URL 格式: {project}-git-{branch}-{username}.vercel.app
+    // - 生产 URL 格式: {project}.vercel.app 或自定义域名
+    // 预览 URL 通常包含 "-git-" 或有多个连字符段
+    const isVercelPreview = hostname.includes('.vercel.app') && (
+        hostname.includes('-git-') ||  // 分支预览
+        hostname.split('-').length > 3  // 包含 hash 的预览（如 project-abc123-user.vercel.app）
+    );
+
+    // 判断是否为开发环境
+    const isDev = isLocalhost || isVercelPreview;
 
     // 如果是开发环境，使用 dev_users 集合；正式环境使用 users 集合
     const collectionName = isDev ? 'dev_users' : 'users';
+
+    console.log(`[Firebase] Hostname: ${hostname}`);
+    console.log(`[Firebase] isLocalhost: ${isLocalhost}, isVercelPreview: ${isVercelPreview}`);
 
     return { isDev, collectionName };
 };
