@@ -90,6 +90,48 @@ const Restore = () => {
         }
     };
 
+    const resetCurrentEnv = async () => {
+        const envName = isProduction() ? '生产环境' : '开发环境';
+        const confirmMsg = `⚠️ 确定要重置${envName}的所有数据吗？\n\n这将清空所有学习进度，此操作不可撤销！\n\n请输入 "重置" 确认：`;
+        const input = window.prompt(confirmMsg);
+
+        if (input !== '重置') {
+            setMessage('❌ 已取消重置操作');
+            return;
+        }
+
+        try {
+            const targetCollection = getCollectionName();
+            const docRef = doc(db, targetCollection, USER_UID);
+            const emptyData = {
+                progress: {
+                    mastered: [],
+                    studied: {},
+                    needsReview: [],
+                    totalStudyTime: 0,
+                    streakDays: 0,
+                    lastStudyDate: null
+                },
+                settings: {},
+                achievements: [],
+                updatedAt: serverTimestamp(),
+                _resetAt: new Date().toISOString(),
+                _env: isProduction() ? 'prod' : 'dev'
+            };
+            await setDoc(docRef, emptyData);
+            setMessage(`✅ ${envName}数据已重置`);
+
+            // 同时清空本地存储
+            localStorage.removeItem('chinese_literacy_progress');
+            localStorage.removeItem('chinese_literacy_settings');
+            localStorage.removeItem('chinese_literacy_achievements');
+
+            await loadAllData();
+        } catch (error) {
+            setMessage('❌ 重置失败: ' + error.message);
+        }
+    };
+
     const formatData = (data) => {
         if (!data) return '无数据';
         const summary = {
@@ -182,9 +224,22 @@ const Restore = () => {
                                 📥 生产 → 开发
                             </button>
                         </div>
-                        <p style={{ color: '#888', fontSize: '0.8rem', marginTop: 16, textAlign: 'center' }}>
-                            ⚠️ 复制操作会覆盖目标集合的数据，请谨慎操作
-                        </p>
+
+                        <div style={{ marginTop: 24, paddingTop: 24, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                            <h4 style={{ color: '#ff6b6b', textAlign: 'center', marginBottom: 12 }}>🗑️ 危险操作</h4>
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                <button
+                                    className="mc-button"
+                                    onClick={resetCurrentEnv}
+                                    style={{ background: '#c0392b', borderColor: '#922b21' }}
+                                >
+                                    ⚠️ 重置{isProduction() ? '生产' : '开发'}环境数据
+                                </button>
+                            </div>
+                            <p style={{ color: '#ff6b6b', fontSize: '0.75rem', marginTop: 12, textAlign: 'center' }}>
+                                此操作将清空当前环境的所有学习进度，不可撤销
+                            </p>
+                        </div>
                     </section>
                 </>
             )}

@@ -88,7 +88,23 @@ export const isProduction = () => !isDev;
 export const getCollectionName = () => collectionName;
 
 /**
+ * 【硬性保护】验证当前环境是否允许写入指定集合
+ * 开发环境只能写 dev_users，生产环境只能写 users
+ */
+const validateWritePermission = (targetCollection) => {
+    const currentEnv = isDev ? 'development' : 'production';
+    const expectedCollection = isDev ? 'dev_users' : 'users';
+
+    if (targetCollection !== expectedCollection) {
+        console.error(`🚫 [BLOCKED] 环境保护：${currentEnv} 环境禁止写入 ${targetCollection} 集合`);
+        return false;
+    }
+    return true;
+};
+
+/**
  * 同步数据到云端
+ * 【安全保护】只能写入当前环境对应的集合
  * @param {string} userId - 用户ID
  * @param {object} data - 要同步的数据
  * @returns {Promise<boolean>} 是否成功
@@ -96,17 +112,62 @@ export const getCollectionName = () => collectionName;
 export const syncToCloud = async (userId, data) => {
     if (!db) return false;
 
+    // 【硬性保护】验证写入权限
+    if (!validateWritePermission(collectionName)) {
+        return false;
+    }
+
     try {
-        // 使用动态集合名称
         const docRef = doc(db, collectionName, userId);
         await setDoc(docRef, {
             ...data,
-            updatedAt: serverTimestamp()
+            updatedAt: serverTimestamp(),
+            _env: isDev ? 'dev' : 'prod',  // 标记数据来源环境
+            _hostname: typeof window !== 'undefined' ? window.location.hostname : 'server'
         }, { merge: true });
         console.log(`☁️ 数据已同步到云端 (${collectionName})`);
         return true;
     } catch (error) {
         console.error('同步失败:', error);
+        return false;
+    }
+};
+
+/**
+ * 重置用户数据（仅限当前环境的集合）
+ * @param {string} userId - 用户ID
+ * @returns {Promise<boolean>} 是否成功
+ */
+export const resetUserData = async (userId) => {
+    if (!db) return false;
+
+    // 【硬性保护】只能重置当前环境的数据
+    if (!validateWritePermission(collectionName)) {
+        return false;
+    }
+
+    try {
+        const docRef = doc(db, collectionName, userId);
+        const emptyData = {
+            progress: {
+                mastered: [],
+                studied: {},
+                needsReview: [],
+                totalStudyTime: 0,
+                streakDays: 0,
+                lastStudyDate: null
+            },
+            settings: {},
+            achievements: [],
+            updatedAt: serverTimestamp(),
+            _resetAt: new Date().toISOString(),
+            _env: isDev ? 'dev' : 'prod'
+        };
+        await setDoc(docRef, emptyData);
+        console.log(`🗑️ 用户数据已重置 (${collectionName})`);
+        return true;
+    } catch (error) {
+        console.error('重置失败:', error);
         return false;
     }
 };
