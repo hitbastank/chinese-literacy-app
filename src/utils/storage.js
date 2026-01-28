@@ -118,8 +118,19 @@ export const initFromCloud = async () => {
         const localProgress = getProgress();
 
         if (cloudData && cloudData.progress) {
-            // 合并策略：取学习次数和已学会字数更多的版本
             const cloudProgress = cloudData.progress;
+
+            // 【重要】检查云端是否有重置标记
+            // 如果云端数据是被主动重置的，则清空本地数据，使用云端空数据
+            if (cloudData._resetAt) {
+                console.log('☁️ 检测到云端重置标记，清空本地数据');
+                // 清空本地存储
+                localStorage.setItem(STORAGE_KEYS.PROGRESS, JSON.stringify(cloudProgress));
+                notifySyncStatus('synced');
+                return cloudProgress;
+            }
+
+            // 正常合并逻辑：取学习次数更多的版本
             const localStudiedCount = Object.keys(localProgress.studied || {}).length;
             const cloudStudiedCount = Object.keys(cloudProgress.studied || {}).length;
 
