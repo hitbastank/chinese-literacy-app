@@ -134,15 +134,12 @@ const Lesson = () => {
     // 增加一个额外的检查：只有当shouldAnimateRef.current为true时才播放动画
     // 这个ref在handleCardClick中被设为true，在切换字符的useEffect中被设为false
     useEffect(() => {
-        console.log('[HanziWriter Effect] isAnimating:', isAnimating, 'clickState:', clickState, 'currentChar:', currentChar?.char, 'containerRef:', !!strokeContainerRef.current, 'shouldAnimateRef:', shouldAnimateRef.current);
-
         // 只有当以下条件都满足时才初始化动画:
         // 1. isAnimating 为 true（用户点击触发）
         // 2. clickState >= 2（确保用户已经点击两次，防止切换字符时的残留状态）
         // 3. shouldAnimateRef.current 为 true（确保是当前字符的动画请求，不是上一个字符残留的）
         // 4. 容器和字符存在
         if (!isAnimating || clickState < 2 || !shouldAnimateRef.current || !strokeContainerRef.current || !currentChar) {
-            console.log('[HanziWriter Effect] Skipping - conditions not met (isAnimating:', isAnimating, 'clickState:', clickState, 'shouldAnimateRef:', shouldAnimateRef.current, ')');
             return;
         }
 
@@ -153,37 +150,31 @@ const Lesson = () => {
         const animatingIndex = currentIndexRef.current;
         const animatingChar = currentChar.char;
         const sessionId = animationSessionRef.current;
-        console.log('[HanziWriter Effect] Starting animation for:', animatingChar, 'at index:', animatingIndex, 'session:', sessionId);
 
         // 动态导入 HanziWriter
         import('hanzi-writer').then(({ default: HanziWriter }) => {
             // 检查是否应该继续动画（三重检查：ref状态、会话ID、索引）
             if (!shouldAnimateRef.current) {
-                console.log('[HanziWriter Effect] shouldAnimateRef is false, aborting');
                 return;
             }
 
             // 检查会话ID是否仍然匹配（防止字符切换后的异步回调）
             if (animationSessionRef.current !== sessionId) {
-                console.log('[HanziWriter Effect] Session changed during import, aborting. Expected:', sessionId, 'Current:', animationSessionRef.current);
                 return;
             }
 
             // 再次检查索引是否仍然匹配（防止在异步加载期间切换了字符）
             if (currentIndexRef.current !== animatingIndex) {
-                console.log('[HanziWriter Effect] Index changed during import, aborting');
                 return;
             }
 
             // 检查容器是否仍然存在
             if (!strokeContainerRef.current) {
-                console.log('[HanziWriter Effect] Container no longer exists, aborting');
                 return;
             }
 
             // 清空容器
             strokeContainerRef.current.innerHTML = '';
-            console.log('[HanziWriter Effect] Creating HanziWriter for:', animatingChar);
 
             try {
                 hanziWriterRef.current = HanziWriter.create(strokeContainerRef.current, animatingChar, {
@@ -196,41 +187,31 @@ const Lesson = () => {
                     showOutline: false,
                     showCharacter: false,
                     // 添加字符数据加载回调
-                    onLoadCharDataSuccess: (data) => {
-                        console.log('[HanziWriter Effect] Character data loaded successfully for:', animatingChar);
-
+                    onLoadCharDataSuccess: () => {
                         // 检查是否应该继续动画（三重检查）
                         if (!shouldAnimateRef.current) {
-                            console.log('[HanziWriter Effect] shouldAnimateRef became false after data load, aborting');
                             return;
                         }
 
                         // 首先检查会话ID是否仍然匹配
                         if (animationSessionRef.current !== sessionId) {
-                            console.log('[HanziWriter Effect] Session changed after data load, aborting animation. Expected:', sessionId, 'Current:', animationSessionRef.current);
                             return;
                         }
 
                         // 检查是否仍然是同一个字符
                         if (currentIndexRef.current !== animatingIndex) {
-                            console.log('[HanziWriter Effect] Index changed after data load, aborting animation');
                             return;
                         }
                         // 数据加载成功后开始动画
-                        console.log('[HanziWriter Effect] Starting animateCharacter');
                         hanziWriterRef.current.animateCharacter({
                             onComplete: () => {
-                                console.log('[HanziWriter Effect] Animation complete for:', animatingChar);
-
                                 // 检查是否应该更新状态（三重检查）
                                 if (!shouldAnimateRef.current) {
-                                    console.log('[HanziWriter Effect] shouldAnimateRef became false after animation, skipping state update');
                                     return;
                                 }
 
                                 // 首先检查会话ID是否仍然匹配
                                 if (animationSessionRef.current !== sessionId) {
-                                    console.log('[HanziWriter Effect] Session changed after animation complete, skipping state update');
                                     return;
                                 }
 

@@ -26,6 +26,25 @@ const firebaseConfig = {
 // 检查是否已配置
 const isConfigured = firebaseConfig.apiKey !== "YOUR_API_KEY";
 
+// ========== 环境隔离逻辑 ==========
+const getEnvironmentInfo = () => {
+    if (typeof window === 'undefined') return { isDev: true, collectionName: 'dev_users' };
+
+    const hostname = window.location.hostname;
+    // 判断是否为开发环境 (localhost 或 vercel.app 预览环境)
+    const isDev = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.includes('vercel.app');
+
+    // 如果是开发环境，使用 dev_users 集合；正式环境使用 users 集合
+    const collectionName = isDev ? 'dev_users' : 'users';
+
+    return { isDev, collectionName };
+};
+
+const { isDev, collectionName } = getEnvironmentInfo();
+
+console.log(`[Firebase] Current Environment: ${isDev ? 'Development/Test' : 'Production'}`);
+console.log(`[Firebase] Using Collection: ${collectionName}`);
+
 let app = null;
 let db = null;
 
@@ -42,6 +61,18 @@ if (isConfigured) {
 }
 
 /**
+ * 判断是否为正式生产环境
+ * @returns {boolean}
+ */
+export const isProduction = () => !isDev;
+
+/**
+ * 获取当前使用的集合名称
+ * @returns {string}
+ */
+export const getCollectionName = () => collectionName;
+
+/**
  * 同步数据到云端
  * @param {string} userId - 用户ID
  * @param {object} data - 要同步的数据
@@ -51,12 +82,13 @@ export const syncToCloud = async (userId, data) => {
     if (!db) return false;
 
     try {
-        const docRef = doc(db, 'users', userId);
+        // 使用动态集合名称
+        const docRef = doc(db, collectionName, userId);
         await setDoc(docRef, {
             ...data,
             updatedAt: serverTimestamp()
         }, { merge: true });
-        console.log('☁️ 数据已同步到云端');
+        console.log(`☁️ 数据已同步到云端 (${collectionName})`);
         return true;
     } catch (error) {
         console.error('同步失败:', error);
@@ -73,14 +105,15 @@ export const loadFromCloud = async (userId) => {
     if (!db) return null;
 
     try {
-        const docRef = doc(db, 'users', userId);
+        // 使用动态集合名称
+        const docRef = doc(db, collectionName, userId);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            console.log('☁️ 从云端加载数据成功');
+            console.log(`☁️ 从云端加载数据成功 (${collectionName})`);
             return docSnap.data();
         } else {
-            console.log('☁️ 云端无数据，使用本地数据');
+            console.log(`☁️ 云端无数据 (${collectionName})，使用本地数据`);
             return null;
         }
     } catch (error) {

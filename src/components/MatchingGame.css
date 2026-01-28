@@ -6,12 +6,10 @@
     align-items: center;
     gap: var(--spacing-lg);
     padding: var(--spacing-xl);
-    background: var(--mc-dirt-brown);
-    border: 6px solid var(--mc-border);
-    box-shadow:
-        inset -6px -6px 0 var(--mc-dirt-dark),
-        inset 6px 6px 0 rgba(255, 255, 255, 0.1),
-        8px 8px 0 rgba(0, 0, 0, 0.3);
+    background: var(--bg-charcoal-900);
+    border: 1px solid var(--stroke-steel-600);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-outer-2), var(--shadow-rim-highlight);
 }
 
 .matching-header {
@@ -24,13 +22,13 @@
 
 .matching-header h3 {
     font-size: 0.85rem;
-    color: var(--mc-gold);
+    color: var(--state-warning);
     margin: 0;
 }
 
 .matching-progress .pixel-text {
     font-size: 0.6rem;
-    color: var(--mc-text-light);
+    color: var(--text-muted);
 }
 
 /* Game Board */
@@ -50,12 +48,11 @@
 
 .matching-item {
     padding: var(--spacing-md) var(--spacing-lg);
-    background: var(--mc-wood-brown);
-    border: 4px solid var(--mc-border);
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--stroke-steel-600);
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    box-shadow:
-        inset -4px -4px 0 var(--mc-wood-dark),
-        inset 4px 4px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-outer-1), var(--shadow-rim-highlight);
     transition: all 0.2s ease;
     min-width: 100px;
     height: 60px;
@@ -65,33 +62,32 @@
 }
 
 .matching-item:hover:not(.matched) {
-    transform: scale(1.05);
-    background: #B07A35;
+    transform: translateY(-2px);
+    background: var(--bg-charcoal-700);
+    border-color: var(--accent-cyan);
+    box-shadow: var(--shadow-outer-2), var(--glow-cyan-outer);
 }
 
 .matching-item.selected {
-    background: var(--mc-diamond);
-    box-shadow:
-        0 0 0 4px var(--mc-diamond),
-        inset -4px -4px 0 #0AA3B3,
-        inset 4px 4px 0 rgba(255, 255, 255, 0.3);
+    background: var(--bg-charcoal-800);
+    border-color: var(--accent-cyan);
+    box-shadow: var(--shadow-outer-1), var(--glow-cyan-inner);
     transform: scale(1.05);
 }
 
 .matching-item.matched {
-    background: #5A8F3F;
-    /* Minecraft Grass/Green */
-    border-color: #2D4D1D;
-    box-shadow:
-        inset -4px -4px 0 #3D6B28,
-        inset 4px 4px 0 #8BE05F;
-    opacity: 1;
+    background: var(--bg-charcoal-800);
+    border-color: var(--state-success);
+    box-shadow: var(--shadow-outer-1), 0 0 12px rgba(32, 227, 154, 0.4);
+    opacity: 0.8;
     pointer-events: none;
     animation: matchPulse 0.4s ease;
 }
 
 .matching-item.wrong {
-    background: var(--mc-redstone);
+    background: var(--bg-charcoal-800);
+    border-color: var(--state-error);
+    box-shadow: var(--shadow-outer-1), 0 0 12px rgba(255, 90, 110, 0.4);
     animation: wrongShake 0.4s ease;
 }
 
@@ -127,16 +123,16 @@
     font-family: var(--font-chinese);
     font-size: 2rem;
     font-weight: 900;
-    color: var(--mc-text-light);
-    text-shadow: 2px 2px 0 var(--mc-text-shadow);
+    color: var(--text-base);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
 }
 
 .matching-text {
     font-family: var(--font-chinese);
     font-size: 1.2rem;
     font-weight: 700;
-    color: var(--mc-text-light);
-    text-shadow: 1px 1px 0 var(--mc-text-shadow);
+    color: var(--text-base);
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
 }
 
 /* Lines area - actual connecting lines */
@@ -152,11 +148,9 @@
     position: absolute;
     left: 0;
     right: 0;
-    height: 6px;
-    background: #55FFFF;
-    /* Minecraft Diamond Cyan */
-    border: 2px solid #00AAAA;
-    box-shadow: 0 0 10px rgba(85, 255, 255, 0.5);
+    height: 2px;
+    background: var(--accent-cyan);
+    box-shadow: var(--glow-cyan-outer);
     transform-origin: left center;
     animation: lineAppear 0.3s ease;
     z-index: 10;
@@ -185,7 +179,7 @@
 /* Tip */
 .matching-tip .pixel-text {
     font-size: 0.55rem;
-    color: var(--mc-stone-gray);
+    color: var(--text-muted);
     text-shadow: none;
 }
 
@@ -205,12 +199,12 @@
 
 .matching-result h2 {
     font-size: 1.5rem;
-    color: var(--mc-gold);
+    color: var(--state-warning);
     margin: 0;
 }
 
 .matching-result p {
-    color: var(--mc-text-light);
+    color: var(--text-base);
 }
 
 .matching-stats {
@@ -219,7 +213,7 @@
     gap: var(--spacing-xs);
     font-family: var(--font-ui);
     font-size: 0.65rem;
-    color: var(--mc-text-light);
+    color: var(--text-muted);
 }
 
 /* Empty state */

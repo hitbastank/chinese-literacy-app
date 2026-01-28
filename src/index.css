@@ -1,71 +1,108 @@
 /* ========================================
-   识字冒险 - Minecraft 像素风格主题
+   识字冒险 - Sci-Fi Industrial Dark Mode Theme
    ======================================== */
 
-/* Google Fonts - ZCOOL KuaiLe for interactive UI, Noto Sans SC for content */
-@import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+/* Google Fonts - Orbitron for UI, Rajdhani for secondary, Noto Sans SC for Chinese */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
 
 /* ========================================
-   CSS Variables - Minecraft Color Palette
+   CSS Variables - Sci-Fi Design Tokens
    ======================================== */
 :root {
-    /* Primary Colors - Yellow theme */
-    --mc-primary: #F2C94C;
-    --mc-primary-dark: #D4A93A;
-    --mc-primary-light: #FFE082;
+    /* Background Colors */
+    --bg-charcoal-900: #1E1F22;
+    --bg-charcoal-800: #2A2C2F;
+    --bg-charcoal-700: #34373B;
+    --bg-panel-gloss: #404349;
 
-    /* Secondary Colors - Purple theme */
-    --mc-secondary: #9B59B6;
-    --mc-secondary-dark: #7D3C98;
-    --mc-secondary-light: #BB8FCE;
+    /* Stroke Colors */
+    --stroke-steel-700: #3A3D41;
+    --stroke-steel-600: #4A4E54;
+    --stroke-highlight: #565A61;
 
-    /* Tertiary Colors - Gray */
-    --mc-tertiary: #7F7F7F;
-    --mc-tertiary-dark: #5F5F5F;
-    --mc-tertiary-light: #A0A0A0;
+    /* Text Colors */
+    --text-base: #C9CDD3;
+    --text-muted: #9EA3A9;
+    --text-inverse: #0E1114;
 
-    /* Grass Green for navbar */
-    --mc-grass-green: #5D8731;
-    --mc-grass-dark: #4A6C27;
-    --mc-grass-light: #7CB342;
+    /* Accent Colors */
+    --accent-cyan: #00E5FF;
+    --accent-teal: #19FFC4;
 
-    /* Dirt Brown for background */
-    --mc-dirt-brown: #8B5A2B;
-    --mc-dirt-dark: #6B4423;
-    --mc-dirt-light: #A0694F;
+    /* State Colors */
+    --state-success: #20E39A;
+    --state-warning: #F5B64A;
+    --state-error: #FF5A6E;
+    --state-info: #4FD1FF;
 
-    /* Wood Brown */
-    --mc-wood-brown: #9C6B30;
-    --mc-wood-dark: #7A5325;
+    /* Legacy Color Mappings (for backward compatibility) */
+    --mc-primary: var(--accent-cyan);
+    --mc-primary-dark: #00B8CC;
+    --mc-primary-light: #4DEDFF;
+    --mc-secondary: var(--accent-teal);
+    --mc-secondary-dark: #14CC9D;
+    --mc-secondary-light: #4DFFD4;
+    --mc-tertiary: var(--bg-charcoal-700);
+    --mc-tertiary-dark: var(--bg-charcoal-800);
+    --mc-tertiary-light: var(--bg-panel-gloss);
+    --mc-grass-green: var(--state-success);
+    --mc-grass-dark: #1AB87D;
+    --mc-grass-light: #4DEBA8;
+    --mc-dirt-brown: var(--bg-charcoal-900);
+    --mc-wood-brown: var(--bg-charcoal-700);
+    --mc-wood-dark: var(--bg-charcoal-800);
+    --mc-stone-gray: var(--stroke-steel-600);
+    --mc-stone-dark: var(--stroke-steel-700);
+    --mc-diamond: var(--accent-cyan);
+    --mc-gold: var(--state-warning);
+    --mc-redstone: var(--state-error);
+    --mc-emerald: var(--state-success);
+    --mc-lapis: var(--state-info);
+    --mc-text-light: var(--text-base);
+    --mc-text-dark: var(--text-inverse);
+    --mc-text-shadow: rgba(0, 0, 0, 0.5);
+    --mc-border: var(--stroke-steel-700);
 
-    /* Stone Colors */
-    --mc-stone-gray: #7F7F7F;
-    --mc-stone-dark: #5F5F5F;
-    --mc-cobble-gray: #6B6B6B;
+    /* Shadows */
+    --shadow-outer-1: 0 2px 6px rgba(0, 0, 0, 0.35);
+    --shadow-outer-2: 0 6px 18px rgba(0, 0, 0, 0.45);
+    --shadow-inset-1: inset 0 1px 3px rgba(0, 0, 0, 0.6);
+    --shadow-inset-2: inset 0 2px 6px rgba(0, 0, 0, 0.7);
+    --shadow-rim-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
-    /* Special Colors */
-    --mc-diamond: #0DC2D6;
-    --mc-gold: #FCEE4B;
-    --mc-redstone: #AA0F01;
-    --mc-emerald: #17DD62;
-    --mc-lapis: #345EC3;
+    /* Glow Effects */
+    --glow-cyan-inner: 0 0 2px #00E5FF;
+    --glow-cyan-outer: 0 0 12px rgba(0, 229, 255, 0.35);
 
-    /* UI Colors */
-    --mc-text-light: #FFFFFF;
-    --mc-text-dark: #3F3F3F;
-    --mc-text-shadow: #3F3F3F;
-    --mc-border: #1A1A1A;
+    /* Opacity */
+    --opacity-disabled: 0.45;
+    --opacity-muted: 0.75;
+    --opacity-backdrop: 0.6;
 
-    /* Pixel Border Size */
-    --pixel-size: 4px;
+    /* Border Radius */
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
 
     /* Font Families */
-    --font-ui: 'ZCOOL KuaiLe', cursive;
-    /* Interactive UI elements */
+    --font-ui: 'Orbitron', 'Rajdhani', 'Exo', 'Segoe UI', sans-serif;
     --font-chinese: 'Noto Sans SC', sans-serif;
-    /* Cards and titles */
+
+    /* Font Weights */
+    --font-weight-title: 600;
+    --font-weight-body: 500;
+    --font-weight-aux: 400;
+
+    /* Font Sizes */
+    --font-size-title: 20px;
+    --font-size-body: 15px;
+    --font-size-aux: 13px;
+
+    /* Letter Spacing */
+    --letter-spacing-ui: 0.2px;
 
     /* Spacing */
+    --spacing-xxs: 4px;
     --spacing-xs: 8px;
     --spacing-sm: 12px;
     --spacing-md: 16px;
@@ -92,42 +129,46 @@ html {
     font-size: 16px;
 }
 
-/* Dirt texture background pattern */
+/* Background with image overlay */
 body {
     font-family: var(--font-chinese);
-    background-color: var(--mc-dirt-brown);
+    background-color: var(--bg-charcoal-900);
     background-image: url('/background_hd.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
     min-height: 100vh;
-    color: var(--mc-text-dark);
+    color: var(--text-base);
     overflow-x: hidden;
+    letter-spacing: var(--letter-spacing-ui);
 }
 
 /* ========================================
-   Glass Module - 毛玻璃模块公共样式
+   Glass Module - Sci-Fi Panel Style
    ======================================== */
 .glass-module {
-    background: rgba(30, 30, 30, 0.75);
+    background: var(--bg-charcoal-800);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
+    border: 1px solid var(--stroke-steel-700);
+    border-radius: var(--radius-md);
     padding: var(--spacing-xl);
     width: 100%;
     max-width: 720px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-outer-2), var(--shadow-rim-highlight);
 }
 
 .module-title {
     font-family: var(--font-ui);
-    font-size: 1.1rem;
-    color: var(--mc-gold);
-    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+    font-size: var(--font-size-title);
+    font-weight: var(--font-weight-title);
+    color: var(--accent-cyan);
+    text-shadow: var(--glow-cyan-inner);
     margin: 0 0 var(--spacing-lg) 0;
     text-align: center;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
 .page-title-glass {
@@ -137,43 +178,63 @@ body {
 
 .page-title-glass h1 {
     font-size: 1.8rem;
-    color: var(--mc-gold);
-    text-shadow: 3px 3px 0 var(--mc-text-shadow);
+    color: var(--accent-cyan);
+    text-shadow: var(--glow-cyan-outer);
     margin: 0;
 }
 
 .page-title-glass .page-subtitle {
     font-size: 1rem;
-    color: #fff;
+    color: var(--text-muted);
     margin-top: var(--spacing-sm);
 }
 
 /* ========================================
-   Pixel Border Utility (Minecraft style)
+   Panel Border Utilities (Sci-Fi style)
    ======================================== */
+.panel-border {
+    position: relative;
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--stroke-steel-700);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-outer-1), var(--shadow-rim-highlight);
+}
+
+.panel-border-accent {
+    background: var(--bg-charcoal-700);
+    border: 1px solid var(--stroke-steel-600);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-outer-1), var(--shadow-rim-highlight);
+}
+
+.panel-border-glow {
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--accent-cyan);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-outer-1), var(--glow-cyan-outer);
+}
+
+/* Legacy pixel-border classes map to new styles */
 .pixel-border {
     position: relative;
-    background: var(--mc-stone-gray);
-    border: var(--pixel-size) solid var(--mc-border);
-    box-shadow:
-        inset calc(var(--pixel-size) * -1) calc(var(--pixel-size) * -1) 0 var(--mc-stone-dark),
-        inset var(--pixel-size) var(--pixel-size) 0 rgba(255, 255, 255, 0.3);
+    background: var(--bg-charcoal-700);
+    border: 1px solid var(--stroke-steel-700);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-outer-1), var(--shadow-rim-highlight);
 }
 
 .pixel-border-wood {
-    background: var(--mc-wood-brown);
-    border: var(--pixel-size) solid var(--mc-border);
-    box-shadow:
-        inset calc(var(--pixel-size) * -1) calc(var(--pixel-size) * -1) 0 var(--mc-wood-dark),
-        inset var(--pixel-size) var(--pixel-size) 0 rgba(255, 255, 255, 0.2);
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--stroke-steel-600);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-outer-1), var(--shadow-rim-highlight);
 }
 
 .pixel-border-grass {
-    background: var(--mc-grass-green);
-    border: var(--pixel-size) solid var(--mc-border);
-    box-shadow:
-        inset calc(var(--pixel-size) * -1) calc(var(--pixel-size) * -1) 0 var(--mc-grass-dark),
-        inset var(--pixel-size) var(--pixel-size) 0 rgba(255, 255, 255, 0.2);
+    background: var(--bg-charcoal-700);
+    border: 1px solid var(--state-success);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-outer-1), 0 0 8px rgba(32, 227, 154, 0.3);
 }
 
 /* ========================================
@@ -181,12 +242,13 @@ body {
    ======================================== */
 .ui-text {
     font-family: var(--font-ui);
-    text-shadow: 2px 2px 0 var(--mc-text-shadow);
+    letter-spacing: var(--letter-spacing-ui);
+    color: var(--text-base);
 }
 
 .chinese-text {
     font-family: var(--font-chinese);
-    font-weight: 700;
+    font-weight: var(--font-weight-body);
 }
 
 .chinese-text-large {
@@ -196,216 +258,202 @@ body {
     line-height: 1.2;
 }
 
-/* Titles use Noto Sans */
+/* Titles */
 h1,
 h2,
 h3 {
-    font-family: var(--font-chinese);
-    font-weight: 900;
-    color: var(--mc-text-light);
-    text-shadow: 3px 3px 0 var(--mc-text-shadow);
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-title);
+    color: var(--text-base);
+    letter-spacing: 0.5px;
 }
 
 h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
 }
 
 h2 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
 }
 
 h3 {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
 }
 
 /* ========================================
-   Pixel Texture Pattern (for buttons)
-   ======================================== */
-.pixel-texture {
-    background-image:
-        linear-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
-    background-size: 4px 4px;
-}
-
-/* ========================================
-   Buttons - Minecraft Style with ZCOOL Font
+   Buttons - Sci-Fi Industrial Style
    ======================================== */
 .mc-button {
     font-family: var(--font-ui);
-    font-size: 1.1rem;
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-body);
     padding: var(--spacing-sm) var(--spacing-lg);
-    background-color: var(--mc-tertiary);
-    background-image:
-        linear-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
-    background-size: 4px 4px;
-    color: var(--mc-text-light);
-    border: var(--pixel-size) solid var(--mc-border);
+    background: var(--bg-charcoal-800);
+    color: var(--text-base);
+    border: 1px solid var(--stroke-steel-700);
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    text-shadow: 2px 2px 0 var(--mc-text-shadow);
-    box-shadow:
-        inset -4px -4px 0 var(--mc-tertiary-dark),
-        inset 4px 4px 0 rgba(255, 255, 255, 0.3);
-    transition: all 0.1s ease;
+    letter-spacing: var(--letter-spacing-ui);
+    box-shadow: var(--shadow-outer-1), var(--shadow-rim-highlight);
+    transition: all 0.2s ease;
     position: relative;
     overflow: hidden;
 }
 
 .mc-button:hover {
-    background-color: var(--mc-tertiary-dark);
-    transform: scale(1.02);
+    background: var(--bg-charcoal-700);
+    border-color: var(--stroke-steel-600);
+    box-shadow: var(--shadow-outer-2), var(--glow-cyan-outer);
+    transform: translateY(-1px);
 }
 
 .mc-button:active {
-    box-shadow:
-        inset 4px 4px 0 var(--mc-tertiary-dark),
-        inset -4px -4px 0 rgba(255, 255, 255, 0.3);
-    transform: scale(0.98);
+    background: var(--bg-charcoal-900);
+    box-shadow: var(--shadow-inset-1);
+    transform: translateY(0);
 }
 
-/* Primary Button - Yellow */
+/* Primary Button - Cyan Accent */
 .mc-button-primary {
-    background-color: var(--mc-primary);
-    color: var(--mc-text-dark);
-    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
-    box-shadow:
-        inset -4px -4px 0 var(--mc-primary-dark),
-        inset 4px 4px 0 rgba(255, 255, 255, 0.5);
+    background: linear-gradient(180deg, var(--bg-charcoal-700) 0%, var(--bg-charcoal-800) 100%);
+    border: 1px solid var(--accent-cyan);
+    color: var(--accent-cyan);
+    box-shadow: var(--shadow-outer-1), var(--glow-cyan-inner);
 }
 
 .mc-button-primary:hover {
-    background-color: var(--mc-primary-light);
+    background: var(--bg-charcoal-700);
+    box-shadow: var(--shadow-outer-2), var(--glow-cyan-outer);
+    text-shadow: var(--glow-cyan-inner);
 }
 
 .mc-button-primary:active {
-    box-shadow:
-        inset 4px 4px 0 var(--mc-primary-dark),
-        inset -4px -4px 0 rgba(255, 255, 255, 0.3);
+    background: var(--bg-charcoal-900);
+    box-shadow: var(--shadow-inset-1), var(--glow-cyan-inner);
 }
 
-/* Secondary Button - Purple */
+/* Secondary Button - Teal Accent */
 .mc-button-secondary {
-    background-color: var(--mc-secondary);
-    box-shadow:
-        inset -4px -4px 0 var(--mc-secondary-dark),
-        inset 4px 4px 0 rgba(255, 255, 255, 0.3);
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--accent-teal);
+    color: var(--accent-teal);
+    box-shadow: var(--shadow-outer-1), 0 0 2px var(--accent-teal);
 }
 
 .mc-button-secondary:hover {
-    background-color: var(--mc-secondary-light);
+    background: var(--bg-charcoal-700);
+    box-shadow: var(--shadow-outer-2), 0 0 12px rgba(25, 255, 196, 0.35);
 }
 
 .mc-button-secondary:active {
-    box-shadow:
-        inset 4px 4px 0 var(--mc-secondary-dark),
-        inset -4px -4px 0 rgba(255, 255, 255, 0.3);
+    background: var(--bg-charcoal-900);
+    box-shadow: var(--shadow-inset-1);
 }
 
-/* Legacy gold button (now maps to primary) */
+/* Gold/Warning Button */
 .mc-button-gold {
-    background-color: var(--mc-primary);
-    color: var(--mc-text-dark);
-    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
-    box-shadow:
-        inset -4px -4px 0 var(--mc-primary-dark),
-        inset 4px 4px 0 rgba(255, 255, 255, 0.5);
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--state-warning);
+    color: var(--state-warning);
+    box-shadow: var(--shadow-outer-1), 0 0 2px var(--state-warning);
 }
 
+.mc-button-gold:hover {
+    box-shadow: var(--shadow-outer-2), 0 0 12px rgba(245, 182, 74, 0.35);
+}
+
+/* Danger Button */
 .mc-button-danger {
-    background-color: var(--mc-redstone);
-    box-shadow:
-        inset -4px -4px 0 #880C01,
-        inset 4px 4px 0 rgba(255, 255, 255, 0.2);
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--state-error);
+    color: var(--state-error);
+    box-shadow: var(--shadow-outer-1), 0 0 2px var(--state-error);
+}
+
+.mc-button-danger:hover {
+    box-shadow: var(--shadow-outer-2), 0 0 12px rgba(255, 90, 110, 0.35);
 }
 
 /* ========================================
-   Cards - Minecraft Inventory Style
+   Cards - Sci-Fi Panel Style
    ======================================== */
 .mc-card {
-    background: #C6C6C6;
-    border: var(--pixel-size) solid var(--mc-border);
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--stroke-steel-700);
+    border-radius: var(--radius-md);
     padding: var(--spacing-lg);
-    box-shadow:
-        inset -4px -4px 0 #8B8B8B,
-        inset 4px 4px 0 #FFFFFF;
+    box-shadow: var(--shadow-outer-1), var(--shadow-rim-highlight);
 }
 
 .mc-card-dark {
-    background: #373737;
-    box-shadow:
-        inset -4px -4px 0 #1F1F1F,
-        inset 4px 4px 0 #4F4F4F;
-    color: var(--mc-text-light);
+    background: var(--bg-charcoal-900);
+    border: 1px solid var(--stroke-steel-700);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-outer-2), var(--shadow-rim-highlight);
+    color: var(--text-base);
 }
 
 /* ========================================
-   Flash Card - Character Display
+   Flash Card - Character Display (Sci-Fi)
    ======================================== */
 .flash-card {
     width: 320px;
     height: 400px;
-    background: linear-gradient(180deg, #F5E6D3 0%, #E8D5C0 100%);
-    border: 6px solid var(--mc-wood-brown);
-    border-radius: 0;
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--stroke-steel-600);
+    border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: var(--spacing-md);
-    box-shadow:
-        inset -6px -6px 0 #7A5325,
-        inset 6px 6px 0 rgba(255, 255, 255, 0.4),
-        8px 8px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-outer-2), var(--shadow-rim-highlight);
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.3s ease;
     position: relative;
+    overflow: hidden;
 }
 
 .flash-card::before {
     content: '';
     position: absolute;
-    top: 8px;
-    left: 8px;
-    right: 8px;
-    bottom: 8px;
-    border: 3px solid var(--mc-wood-dark);
-    pointer-events: none;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+    opacity: 0.5;
 }
 
 .flash-card:hover {
     transform: translateY(-4px);
-    box-shadow:
-        inset -6px -6px 0 #7A5325,
-        inset 6px 6px 0 rgba(255, 255, 255, 0.4),
-        12px 12px 0 rgba(0, 0, 0, 0.3);
+    border-color: var(--accent-cyan);
+    box-shadow: var(--shadow-outer-2), var(--glow-cyan-outer);
 }
 
 .flash-card:active {
-    transform: translateY(2px);
-    box-shadow:
-        inset 6px 6px 0 #7A5325,
-        inset -6px -6px 0 rgba(255, 255, 255, 0.4),
-        4px 4px 0 rgba(0, 0, 0, 0.3);
+    transform: translateY(0);
+    box-shadow: var(--shadow-inset-1);
 }
 
 .flash-card-character {
     font-family: var(--font-chinese);
     font-size: 8rem;
     font-weight: 900;
-    color: var(--mc-text-dark);
-    text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+    color: var(--text-base);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     line-height: 1;
 }
 
 .flash-card-pinyin {
     font-family: var(--font-chinese);
     font-size: 2rem;
-    color: var(--mc-grass-green);
+    color: var(--accent-cyan);
     font-weight: 700;
     opacity: 0;
     transform: translateY(-10px);
     transition: all 0.3s ease;
+    text-shadow: var(--glow-cyan-inner);
 }
 
 .flash-card-pinyin.visible {
@@ -415,10 +463,11 @@ h3 {
 
 .flash-card-hint {
     font-family: var(--font-ui);
-    font-size: 0.6rem;
-    color: var(--mc-stone-gray);
+    font-size: var(--font-size-aux);
+    color: var(--text-muted);
     position: absolute;
     bottom: 16px;
+    letter-spacing: var(--letter-spacing-ui);
 }
 
 /* ========================================
@@ -427,22 +476,23 @@ h3 {
 /* navbar 样式已移至 Navbar.css，请勿在此处定义 */
 
 /* ========================================
-   Progress Bar - XP Style
+   Progress Bar - Sci-Fi Style
    ======================================== */
 .progress-container {
-    background: var(--mc-stone-dark);
-    border: var(--pixel-size) solid var(--mc-border);
+    background: var(--bg-charcoal-900);
+    border: 1px solid var(--stroke-steel-700);
+    border-radius: var(--radius-sm);
     padding: 4px;
     width: 100%;
     max-width: 400px;
+    box-shadow: var(--shadow-inset-1);
 }
 
 .progress-bar {
-    height: 32px;
-    background: var(--mc-emerald);
-    box-shadow:
-        inset 0 -4px 0 #12B050,
-        inset 0 4px 0 rgba(255, 255, 255, 0.3);
+    height: 28px;
+    background: linear-gradient(180deg, var(--accent-cyan) 0%, #00B8CC 100%);
+    border-radius: calc(var(--radius-sm) - 2px);
+    box-shadow: var(--glow-cyan-inner), 0 0 8px rgba(0, 229, 255, 0.3);
     transition: width 0.5s ease;
     position: relative;
 }
@@ -454,63 +504,68 @@ h3 {
     top: 50%;
     transform: translate(-50%, -50%);
     font-family: var(--font-ui);
-    font-size: 0.6rem;
-    color: var(--mc-text-light);
-    text-shadow: 1px 1px 0 var(--mc-text-shadow);
+    font-size: var(--font-size-aux);
+    color: var(--text-inverse);
+    font-weight: var(--font-weight-body);
+    letter-spacing: var(--letter-spacing-ui);
 }
 
 /* ========================================
-   Game Board
+   Game Board - Sci-Fi Panel
    ======================================== */
 .game-board {
-    background: var(--mc-dirt-brown);
-    border: 6px solid var(--mc-border);
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--stroke-steel-600);
+    border-radius: var(--radius-lg);
     padding: var(--spacing-xl);
-    box-shadow:
-        inset -8px -8px 0 var(--mc-dirt-dark),
-        inset 8px 8px 0 rgba(255, 255, 255, 0.1),
-        12px 12px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-outer-2), var(--shadow-rim-highlight);
 }
 
 /* ========================================
-   Quiz Options
+   Quiz Options - Sci-Fi Style
    ======================================== */
 .quiz-option {
     font-family: var(--font-chinese);
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1.4rem;
+    font-weight: var(--font-weight-body);
     padding: var(--spacing-md) var(--spacing-xl);
-    background: #C6C6C6;
-    border: var(--pixel-size) solid var(--mc-border);
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--stroke-steel-600);
+    border-radius: var(--radius-sm);
     cursor: pointer;
     min-width: 150px;
     text-align: center;
-    box-shadow:
-        inset -4px -4px 0 #8B8B8B,
-        inset 4px 4px 0 #FFFFFF;
-    transition: all 0.15s ease;
+    color: var(--text-base);
+    box-shadow: var(--shadow-outer-1), var(--shadow-rim-highlight);
+    transition: all 0.2s ease;
 }
 
 .quiz-option:hover {
-    background: #D8D8D8;
-    transform: scale(1.05);
+    background: var(--bg-charcoal-700);
+    border-color: var(--accent-cyan);
+    box-shadow: var(--shadow-outer-1), var(--glow-cyan-outer);
+    transform: translateY(-2px);
 }
 
 .quiz-option:active {
-    box-shadow:
-        inset 4px 4px 0 #8B8B8B,
-        inset -4px -4px 0 #FFFFFF;
-    transform: scale(0.98);
+    background: var(--bg-charcoal-900);
+    box-shadow: var(--shadow-inset-1);
+    transform: translateY(0);
 }
 
 .quiz-option.correct {
-    background: var(--mc-emerald);
+    background: var(--bg-charcoal-800);
+    border-color: var(--state-success);
+    color: var(--state-success);
+    box-shadow: var(--shadow-outer-1), 0 0 12px rgba(32, 227, 154, 0.4);
     animation: correctPulse 0.5s ease;
 }
 
 .quiz-option.wrong {
-    background: var(--mc-redstone);
-    color: var(--mc-text-light);
+    background: var(--bg-charcoal-800);
+    border-color: var(--state-error);
+    color: var(--state-error);
+    box-shadow: var(--shadow-outer-1), 0 0 12px rgba(255, 90, 110, 0.4);
     animation: wrongShake 0.5s ease;
 }
 
@@ -522,7 +577,8 @@ h3 {
     }
 
     50% {
-        transform: scale(1.1);
+        transform: scale(1.05);
+        box-shadow: var(--shadow-outer-2), 0 0 20px rgba(32, 227, 154, 0.6);
     }
 }
 
@@ -535,26 +591,25 @@ h3 {
 
     20%,
     60% {
-        transform: translateX(-10px);
+        transform: translateX(-8px);
     }
 
     40%,
     80% {
-        transform: translateX(10px);
+        transform: translateX(8px);
     }
 }
 
 /* ========================================
-   Matching Game
+   Matching Game - Sci-Fi Style
    ======================================== */
 .matching-item {
     padding: var(--spacing-md);
-    background: var(--mc-wood-brown);
-    border: var(--pixel-size) solid var(--mc-border);
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--stroke-steel-600);
+    border-radius: var(--radius-sm);
     cursor: grab;
-    box-shadow:
-        inset -4px -4px 0 var(--mc-wood-dark),
-        inset 4px 4px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-outer-1), var(--shadow-rim-highlight);
     transition: all 0.2s ease;
 }
 
@@ -563,59 +618,54 @@ h3 {
 }
 
 .matching-item.selected {
-    background: var(--mc-diamond);
-    box-shadow:
-        0 0 0 4px var(--mc-diamond),
-        inset -4px -4px 0 #0AA3B3,
-        inset 4px 4px 0 rgba(255, 255, 255, 0.3);
+    background: var(--bg-charcoal-700);
+    border-color: var(--accent-cyan);
+    box-shadow: var(--shadow-outer-1), var(--glow-cyan-outer);
 }
 
 .matching-item.matched {
-    background: var(--mc-emerald);
+    background: var(--bg-charcoal-700);
+    border-color: var(--state-success);
     opacity: 0.7;
     pointer-events: none;
 }
 
 /* ========================================
-   Achievement Badge
+   Achievement Badge - Sci-Fi Style
    ======================================== */
 .achievement-badge {
     width: 80px;
     height: 80px;
-    background: var(--mc-gold);
-    border: var(--pixel-size) solid var(--mc-border);
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--state-warning);
+    border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 2rem;
-    box-shadow:
-        inset -4px -4px 0 #D4C43E,
-        inset 4px 4px 0 rgba(255, 255, 255, 0.5);
+    box-shadow: var(--shadow-outer-1), 0 0 8px rgba(245, 182, 74, 0.3);
 }
 
 .achievement-badge.locked {
-    background: var(--mc-stone-gray);
+    background: var(--bg-charcoal-900);
+    border-color: var(--stroke-steel-700);
     opacity: 0.5;
-    box-shadow:
-        inset -4px -4px 0 var(--mc-stone-dark),
-        inset 4px 4px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-inset-1);
 }
 
 /* ========================================
-   Stroke Animation Container
+   Stroke Animation Container - Sci-Fi Style
    ======================================== */
 .stroke-container {
     background: #FFFFFF;
-    border: 6px solid var(--mc-wood-brown);
+    border: 2px solid var(--stroke-steel-600);
+    border-radius: var(--radius-md);
     width: 300px;
     height: 300px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow:
-        inset -6px -6px 0 #7A5325,
-        inset 6px 6px 0 rgba(255, 255, 255, 0.4),
-        8px 8px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-outer-2), var(--shadow-rim-highlight);
 }
 
 /* ========================================
@@ -674,7 +724,7 @@ h3 {
 }
 
 /* ========================================
-   Stats Display
+   Stats Display - Sci-Fi Style
    ======================================== */
 .stats-grid {
     display: grid;
@@ -685,32 +735,30 @@ h3 {
 }
 
 .stat-card {
-    background: var(--mc-wood-brown);
-    border: var(--pixel-size) solid var(--mc-border);
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--stroke-steel-700);
+    border-radius: var(--radius-sm);
     padding: var(--spacing-lg);
     text-align: center;
-    box-shadow:
-        inset -4px -4px 0 var(--mc-wood-dark),
-        inset 4px 4px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-outer-1), var(--shadow-rim-highlight);
 }
 
 .stat-value {
     font-family: var(--font-ui);
     font-size: 2rem;
-    color: var(--mc-gold);
-    text-shadow: 2px 2px 0 var(--mc-text-shadow);
+    color: var(--accent-cyan);
+    text-shadow: var(--glow-cyan-inner);
 }
 
 .stat-label {
     font-family: var(--font-ui);
-    font-size: 0.6rem;
-    color: var(--mc-text-light);
+    font-size: 0.8rem;
+    color: var(--text-muted);
     margin-top: var(--spacing-xs);
-    text-shadow: 1px 1px 0 var(--mc-text-shadow);
 }
 
 /* ========================================
-   Character Grid
+   Character Grid - Sci-Fi Style
    ======================================== */
 .character-grid {
     display: grid;
@@ -728,35 +776,40 @@ h3 {
     font-family: var(--font-chinese);
     font-size: 2rem;
     font-weight: 700;
-    background: #C6C6C6;
-    border: 3px solid var(--mc-border);
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--stroke-steel-600);
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    box-shadow:
-        inset -3px -3px 0 #8B8B8B,
-        inset 3px 3px 0 #FFFFFF;
+    color: var(--text-base);
+    box-shadow: var(--shadow-outer-1);
     transition: all 0.15s ease;
 }
 
 .character-cell:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
     z-index: 1;
+    border-color: var(--accent-cyan);
+    box-shadow: var(--glow-cyan-outer);
 }
 
 .character-cell.learned {
-    background: var(--mc-emerald);
-    color: var(--mc-text-light);
+    background: var(--bg-charcoal-700);
+    border-color: var(--state-success);
+    color: var(--state-success);
 }
 
 .character-cell.in-progress {
-    background: var(--mc-gold);
+    background: var(--bg-charcoal-700);
+    border-color: var(--state-warning);
+    color: var(--state-warning);
 }
 
 /* ========================================
-   Category Tabs
+   Category Tabs - Sci-Fi Style
    ======================================== */
 .category-tabs {
     display: flex;
-    gap: 0;
+    gap: var(--spacing-xs);
     flex-wrap: wrap;
     justify-content: center;
     margin-bottom: var(--spacing-lg);
@@ -764,30 +817,22 @@ h3 {
 
 .category-tab {
     font-family: var(--font-ui);
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     padding: var(--spacing-sm) var(--spacing-md);
-    background: var(--mc-stone-gray);
-    border: 3px solid var(--mc-border);
-    border-right: none;
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--stroke-steel-700);
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    color: var(--mc-text-light);
-    text-shadow: 1px 1px 0 var(--mc-text-shadow);
-    box-shadow:
-        inset -3px -3px 0 var(--mc-stone-dark),
-        inset 3px 3px 0 rgba(255, 255, 255, 0.3);
-    transition: all 0.1s ease;
-}
-
-.category-tab:last-child {
-    border-right: 3px solid var(--mc-border);
+    color: var(--text-muted);
+    transition: all 0.2s ease;
 }
 
 .category-tab:hover,
 .category-tab.active {
-    background: var(--mc-grass-green);
-    box-shadow:
-        inset -3px -3px 0 var(--mc-grass-dark),
-        inset 3px 3px 0 rgba(255, 255, 255, 0.3);
+    background: var(--bg-charcoal-700);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+    box-shadow: var(--glow-cyan-outer);
 }
 
 /* ========================================

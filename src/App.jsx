@@ -8,6 +8,7 @@ import Progress from './pages/Progress';
 import Curriculum from './pages/Curriculum';
 import Lesson from './pages/Lesson';
 import English from './pages/English';
+import Restore from './pages/Restore';
 import { initFromCloud } from './utils/storage';
 
 /**
@@ -33,6 +34,7 @@ function App() {
                     <Route path="/curriculum" element={<Curriculum />} />
                     <Route path="/lesson/:lessonId" element={<Lesson />} />
                     <Route path="/english" element={<English />} />
+                    <Route path="/restore" element={<Restore />} />
                 </Routes>
             </main>
         </div>

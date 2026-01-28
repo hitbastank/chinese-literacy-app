@@ -9,28 +9,7 @@
     align-items: center;
 }
 
-/* 毛玻璃模块通用样式 */
-.glass-module {
-    background: rgba(30, 30, 30, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: var(--spacing-xl);
-    width: 100%;
-    max-width: 720px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-/* 模块标题 */
-.module-title {
-    font-family: var(--font-ui);
-    font-size: 1.1rem;
-    color: var(--mc-gold);
-    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
-    margin: 0 0 var(--spacing-lg) 0;
-    text-align: center;
-}
+/* .glass-module 和 .module-title 已在 index.css 中定义 */
 
 /* Hero模块 */
 .hero-module {

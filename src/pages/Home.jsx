@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { getStats } from '../utils/storage';
-import charData, { getTotalCount as getTotalChineseCount, getCategoryStats } from '../data/characters';
+import { getTotalCount as getTotalChineseCount, getCategoryStats } from '../data/characters';
 import { getTotalCount as getTotalEnglishCount } from '../data/englishWords';
 import './Home.css';
 

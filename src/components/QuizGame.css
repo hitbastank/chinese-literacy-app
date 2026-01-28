@@ -6,12 +6,10 @@
     align-items: center;
     gap: var(--spacing-lg);
     padding: var(--spacing-xl);
-    background: var(--mc-dirt-brown);
-    border: 6px solid var(--mc-border);
-    box-shadow:
-        inset -6px -6px 0 var(--mc-dirt-dark),
-        inset 6px 6px 0 rgba(255, 255, 255, 0.1),
-        8px 8px 0 rgba(0, 0, 0, 0.3);
+    background: var(--bg-charcoal-900);
+    border: 1px solid var(--stroke-steel-600);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-outer-2), var(--shadow-rim-highlight);
     min-width: 350px;
     max-width: 500px;
 }
@@ -26,30 +24,30 @@
 
 .quiz-progress .progress-container {
     width: 100%;
-    height: 28px;
-    background: #4B4B4B;
-    border: 3px solid #000;
+    height: 12px;
+    background: var(--bg-charcoal-700);
+    border-radius: var(--radius-sm);
     position: relative;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--shadow-inset-1);
+    overflow: hidden;
 }
 
 .quiz-progress .progress-bar {
     height: 100%;
-    background: #3BCC00;
-    /* Minecraft Experience Bar Green */
-    box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.4);
+    background: var(--state-success);
+    box-shadow: 0 0 8px rgba(32, 227, 154, 0.4);
     transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .quiz-score-mini {
     font-family: var(--font-ui);
     font-size: 0.9rem;
-    color: var(--mc-text-light);
+    color: var(--text-muted);
     text-align: right;
 }
 
 .quiz-score-mini .score-value {
-    color: var(--mc-gold);
+    color: var(--state-warning);
 }
 
 /* Question Area */
@@ -63,7 +61,7 @@
 
 .quiz-question {
     font-size: 0.85rem;
-    color: var(--mc-text-light);
+    color: var(--text-base);
     line-height: 1.6;
     margin: 0;
 }
@@ -86,83 +84,79 @@
     align-items: center;
     justify-content: center;
     padding: var(--spacing-lg);
-    background: #8B8B8B;
-    border: 4px solid #000;
+    background: var(--bg-charcoal-800);
+    border: 1px solid var(--stroke-steel-600);
+    border-radius: var(--radius-sm);
     cursor: pointer;
     min-height: 100px;
-    box-shadow:
-        inset -4px -4px 0 #5a5a5a,
-        inset 4px 4px 0 #c6c6c6,
-        4px 4px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-outer-1), var(--shadow-rim-highlight);
     transition: all 0.15s ease;
 }
 
 .quiz-option:hover:not(:disabled) {
-    background: #a0a0a0;
-    transform: scale(1.03);
+    background: var(--bg-charcoal-700);
+    border-color: var(--accent-cyan);
+    box-shadow: var(--shadow-outer-2), var(--glow-cyan-outer);
+    transform: translateY(-2px);
 }
 
 .quiz-option:active:not(:disabled) {
-    box-shadow:
-        inset 4px 4px 0 #5a5a5a,
-        inset -4px -4px 0 #c6c6c6;
-    transform: scale(0.98);
+    background: var(--bg-charcoal-900);
+    box-shadow: var(--shadow-inset-1);
+    transform: translateY(0);
 }
 
 .quiz-option:disabled {
     cursor: default;
+    opacity: 0.6;
 }
 
 .quiz-option .option-char {
     font-family: var(--font-chinese);
     font-size: 2.5rem;
     font-weight: 900;
-    color: #fff;
-    text-shadow: 3px 3px 0 #000;
+    color: var(--text-base);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
     line-height: 1;
 }
 
 .quiz-option .option-pinyin {
     font-family: var(--font-chinese);
     font-size: 1rem;
-    color: var(--mc-grass-green);
+    color: var(--accent-cyan);
     margin-top: var(--spacing-xs);
     opacity: 0;
     animation: fadeIn 0.3s ease forwards;
+    text-shadow: var(--glow-cyan-inner);
 }
 
 .quiz-option.correct {
-    background: #55aa55;
-    border-color: #227722;
-    box-shadow:
-        inset -4px -4px 0 #338833,
-        inset 4px 4px 0 #77cc77,
-        0 0 20px rgba(85, 255, 85, 0.5);
+    background: var(--bg-charcoal-800);
+    border-color: var(--state-success);
+    box-shadow: var(--shadow-outer-1), 0 0 12px rgba(32, 227, 154, 0.4);
     animation: correctPulse 0.5s ease;
 }
 
 .quiz-option.correct .option-char {
-    color: #fff;
-    text-shadow: 2px 2px 0 #000;
+    color: var(--state-success);
+    text-shadow: var(--glow-cyan-inner);
 }
 
 .quiz-option.correct .option-pinyin {
-    color: #fff;
+    color: var(--state-success);
     opacity: 1;
 }
 
 .quiz-option.wrong {
-    background: #aa5555;
-    border-color: #772222;
-    box-shadow:
-        inset -4px -4px 0 #883333,
-        inset 4px 4px 0 #cc7777;
+    background: var(--bg-charcoal-800);
+    border-color: var(--state-error);
+    box-shadow: var(--shadow-outer-1), 0 0 12px rgba(255, 90, 110, 0.4);
     animation: wrongShake 0.5s ease;
 }
 
 .quiz-option.wrong .option-char {
-    color: #fff;
-    text-shadow: 2px 2px 0 #000;
+    color: var(--state-error);
+    text-shadow: 0 0 4px rgba(255, 90, 110, 0.5);
 }
 
 @keyframes correctPulse {
@@ -174,6 +168,7 @@
 
     50% {
         transform: scale(1.05);
+        box-shadow: var(--shadow-outer-2), 0 0 20px rgba(32, 227, 154, 0.6);
     }
 }
 
@@ -215,13 +210,13 @@
 }
 
 .quiz-feedback.correct {
-    color: var(--mc-emerald);
-    text-shadow: 2px 2px 0 var(--mc-text-shadow);
+    color: var(--state-success);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
 }
 
 .quiz-feedback.wrong {
-    color: var(--mc-gold);
-    text-shadow: 2px 2px 0 var(--mc-text-shadow);
+    color: var(--state-warning);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
 }
 
 @keyframes slideUp {
@@ -252,7 +247,7 @@
 
 .quiz-result-card h2 {
     font-size: 1.2rem;
-    color: var(--mc-gold);
+    color: var(--state-warning);
     margin: 0;
 }
 
@@ -265,27 +260,27 @@
 .quiz-score-display .score-number {
     font-family: var(--font-ui);
     font-size: 4rem;
-    color: var(--mc-emerald);
-    text-shadow: 4px 4px 0 var(--mc-text-shadow);
+    color: var(--state-success);
+    text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
 }
 
 .quiz-score-display .score-divider {
     font-family: var(--font-ui);
     font-size: 2rem;
-    color: var(--mc-text-light);
+    color: var(--text-muted);
 }
 
 .quiz-score-display .score-total {
     font-family: var(--font-ui);
     font-size: 2rem;
-    color: var(--mc-text-light);
-    text-shadow: 2px 2px 0 var(--mc-text-shadow);
+    color: var(--text-base);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
 }
 
 .quiz-percentage {
     font-family: var(--font-ui);
     font-size: 0.8rem;
-    color: var(--mc-text-light);
+    color: var(--text-muted);
 }
 
 .quiz-result-actions {
@@ -302,7 +297,7 @@
 .quiz-game-empty .pixel-text,
 .quiz-game-loading .pixel-text {
     font-size: 0.7rem;
-    color: var(--mc-stone-gray);
+    color: var(--text-muted);
 }
 
 /* Responsive */
