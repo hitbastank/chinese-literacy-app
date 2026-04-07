@@ -278,37 +278,22 @@ const Lesson = () => {
             setClickState(2);
             setIsPlaying(true);
 
+            // 立即启动笔画动画（与语音同步开始）
+            shouldAnimateRef.current = true;
+            setIsAnimating(true);
+
             try {
-                // 先开始朗读汉字
-                const speakPromise = speak(currentChar.char, { rate: 0.7 });
+                // 仅朗读：汉字 → 词语 → 例句
+                await speak(currentChar.char, { rate: 0.7 });
 
-                // 等待 500ms 后再启动笔画动画（确保语音已开始播放）
-                setTimeout(() => {
-                    shouldAnimateRef.current = true;
-                    setIsAnimating(true);
-                }, 500);
-
-                // 等待汉字朗读完成
-                await speakPromise;
-
-                // 朗读释义
-                if (currentChar.meaning) {
-                    await speak(currentChar.meaning, { rate: 0.9 });
-                }
-
-                // 朗读词语
                 if (currentChar.words && currentChar.words[0]) {
                     await speak(currentChar.words[0], { rate: 0.85 });
                 }
 
-                // 朗读记忆点/故事
-                if (currentChar.story) {
-                    await speak(currentChar.story, { rate: 1.0 });
-                }
-
-                // 朗读Minecraft造句
-                if (currentChar.minecraftSentence) {
-                    await speak(currentChar.minecraftSentence, { rate: 0.95 });
+                // 优先使用 Minecraft 例句，没有则回退普通例句
+                const sentence = currentChar.minecraftSentence || currentChar.example;
+                if (sentence) {
+                    await speak(sentence, { rate: 0.95 });
                 }
             } catch (error) {
                 console.error('语音播放失败:', error);

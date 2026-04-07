@@ -47,34 +47,36 @@ const notifySyncStatus = (status) => {
     syncListeners.forEach(l => l(status));
 };
 
+const DEFAULT_PROGRESS = {
+    learned: [],        // 兼容旧版：已学会的汉字索引
+    inProgress: [],     // 兼容旧版：正在学习的汉字索引
+    reviewNeeded: [],   // 兼容旧版：需要复习的汉字索引
+    // 新版字段
+    mastered: [],       // 彻底学会的字 (char string)
+    studied: {},        // 学过的字及次数 { char: count }
+    needsReview: [],    // 标记为不熟练的字 (char string)
+    totalStudyTime: 0,
+    streakDays: 0,
+    lastStudyDate: null
+};
+
 const STORAGE_KEYS = {
     PROGRESS: `${USER_UID}_chinese_literacy_progress`,
     SETTINGS: `${USER_UID}_chinese_literacy_settings`,
     ACHIEVEMENTS: `${USER_UID}_chinese_literacy_achievements`,
     DAILY_GOAL: `${USER_UID}_chinese_literacy_daily_goal`,
-    LAST_STUDY_DATE: `${USER_UID}_chinese_literacy_last_study_date`
+    LAST_STUDY_DATE: `${USER_UID}_chinese_literacy_last_study_date`,
+    LAST_HANDLED_RESET_AT: `${USER_UID}_chinese_literacy_last_handled_reset_at`
 };
 
 // 获取学习进度
 export const getProgress = () => {
     try {
         const data = localStorage.getItem(STORAGE_KEYS.PROGRESS);
-        const defaultProgress = {
-            learned: [],        // 兼容旧版：已学会的汉字索引
-            inProgress: [],     // 兼容旧版：正在学习的汉字索引
-            reviewNeeded: [],   // 兼容旧版：需要复习的汉字索引
-            // 新版字段
-            mastered: [],       // 彻底学会的字 (char string)
-            studied: {},        // 学过的字及次数 { char: count }
-            needsReview: [],    // 标记为不熟练的字 (char string)
-            totalStudyTime: 0,
-            streakDays: 0,
-            lastStudyDate: null
-        };
-        return data ? { ...defaultProgress, ...JSON.parse(data) } : defaultProgress;
+        return data ? { ...DEFAULT_PROGRESS, ...JSON.parse(data) } : { ...DEFAULT_PROGRESS };
     } catch (error) {
         console.error('获取进度失败:', error);
-        return { learned: [], inProgress: [], reviewNeeded: [], mastered: [], studied: {}, needsReview: [], totalStudyTime: 0, streakDays: 0, lastStudyDate: null };
+        return { ...DEFAULT_PROGRESS };
     }
 };
 
@@ -121,13 +123,33 @@ export const initFromCloud = async () => {
             const cloudProgress = cloudData.progress;
 
             // 【重要】检查云端是否有重置标记
-            // 如果云端数据是被主动重置的，则清空本地数据，使用云端空数据
+            // 仅在首次看到该重置事件时清空本地，避免应用每次启动都被反复清空
             if (cloudData._resetAt) {
-                console.log('☁️ 检测到云端重置标记，清空本地数据');
-                // 清空本地存储
-                localStorage.setItem(STORAGE_KEYS.PROGRESS, JSON.stringify(cloudProgress));
-                notifySyncStatus('synced');
-                return cloudProgress;
+                const lastHandledResetAt = localStorage.getItem(STORAGE_KEYS.LAST_HANDLED_RESET_AT);
+                const cloudHasProgressData = !!(
+                    cloudProgress && (
+                        (cloudProgress.mastered && cloudProgress.mastered.length > 0) ||
+                        (cloudProgress.needsReview && cloudProgress.needsReview.length > 0) ||
+                        (cloudProgress.studied && Object.keys(cloudProgress.studied).length > 0)
+                    )
+                );
+
+                if (lastHandledResetAt !== cloudData._resetAt) {
+                    if (cloudHasProgressData) {
+                        console.log('☁️ 检测到新的云端重置标记，使用云端重置后的进度（仅执行一次）');
+                        const resetProgress = { ...DEFAULT_PROGRESS, ...cloudProgress };
+                        localStorage.setItem(STORAGE_KEYS.PROGRESS, JSON.stringify(resetProgress));
+                        localStorage.setItem(STORAGE_KEYS.LAST_HANDLED_RESET_AT, cloudData._resetAt);
+                        notifySyncStatus('synced');
+                        return resetProgress;
+                    }
+
+                    // 云端仅有重置标记但没有有效进度内容：不清空本地，避免误伤
+                    console.warn('☁️ 检测到重置标记，但云端进度为空，已跳过本地清空');
+                    localStorage.setItem(STORAGE_KEYS.LAST_HANDLED_RESET_AT, cloudData._resetAt);
+                } else {
+                    console.log('☁️ 云端重置标记已处理过，跳过重复清空');
+                }
             }
 
             // 正常合并逻辑：取学习次数更多的版本

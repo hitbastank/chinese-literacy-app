@@ -132,6 +132,15 @@ export const checkEdgeTTSAvailable = async () => {
 export const getCurrentTTSEngine = () => currentEngine;
 
 /**
+ * 同步当前引擎状态：服务可用则切换到 EdgeTTS，不可用则回退 WebSpeech
+ */
+const syncTTSEngine = async () => {
+    const available = await checkEdgeTTSAvailable();
+    currentEngine = available ? TTS_ENGINE.EDGE_TTS : TTS_ENGINE.WEB_SPEECH;
+    return currentEngine;
+};
+
+/**
  * 检查浏览器是否支持语音合成
  */
 export const isSpeechSupported = () => {
@@ -153,8 +162,8 @@ const getChineseVoice = () => {
 
 // 默认语音配置
 const VOICE_CONFIG = {
-    CHINESE: 'zh-CN-XiaoxiaoNeural',  // 中文女童声
-    ENGLISH: 'en-US-AnaNeural'         // 英语女童声
+    CHINESE: 'zh-CN-XiaoyouMultilingualNeural',   // 中文多语种女声（更口语）
+    ENGLISH: 'en-US-AnaNeural'                    // 英语女童声
 };
 
 /**
@@ -262,8 +271,10 @@ const speakWithEdgeTTS = async (text, options = {}) => {
  * 使用 Edge TTS 朗读英语文本
  */
 export const speakEnglish = async (text, options = {}) => {
+    const engine = await syncTTSEngine();
+
     // 优先使用 Edge TTS
-    if (currentEngine === TTS_ENGINE.EDGE_TTS || await checkEdgeTTSAvailable()) {
+    if (engine === TTS_ENGINE.EDGE_TTS) {
         return speakWithEdgeTTS(text, {
             ...options,
             rate: options.rate || 0.85,
@@ -331,7 +342,8 @@ const speakWithWebSpeech = (text, options = {}) => {
  * 朗读文本 - 根据当前引擎选择
  */
 export const speak = async (text, options = {}) => {
-    if (currentEngine === TTS_ENGINE.EDGE_TTS) {
+    const engine = await syncTTSEngine();
+    if (engine === TTS_ENGINE.EDGE_TTS) {
         return speakWithEdgeTTS(text, options);
     }
     return speakWithWebSpeech(text, options);

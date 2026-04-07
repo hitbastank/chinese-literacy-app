@@ -1,0 +1,22 @@
+
+╔══════════════════════════════════════════════════════════════╗
+║        Azure Speech SDK + Edge TTS 语音服务器               ║
+╠══════════════════════════════════════════════════════════════╣
+║  服务地址: http://localhost:8766                             ║
+║  当前引擎: edge-tts                                      ║
+║  Azure就绪: 否（将回退edge-tts）                 ║
+║  默认语音: zh-CN-XiaoxiaoMultilingualNeural                           ║
+║                                                              ║
+║  接口:                                                       ║
+║    POST /tts      - 生成语音                                 ║
+║    POST /preload  - 批量预加载                               ║
+║    GET  /voices   - 可用语音                                 ║
+║    GET  /health   - 健康检查                                 ║
+║                                                              ║
+║  缓存目录: /Users/liyifan/Documents/antigravity-test/chinese-literacy-app/.tts_cache                        ║
+║  依赖环境变量:                                               ║
+║    AZURE_SPEECH_KEY / AZURE_SPEECH_REGION                   ║
+╚══════════════════════════════════════════════════════════════╝
+        
+======== Running on http://0.0.0.0:8766 ========
+(Press CTRL+C to quit)

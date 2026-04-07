@@ -122,6 +122,17 @@ const Restore = () => {
             setMessage(`✅ ${envName}数据已重置`);
 
             // 同时清空本地存储
+            const prefixedKeys = [
+                `${USER_UID}_chinese_literacy_progress`,
+                `${USER_UID}_chinese_literacy_settings`,
+                `${USER_UID}_chinese_literacy_achievements`,
+                `${USER_UID}_chinese_literacy_daily_goal`,
+                `${USER_UID}_chinese_literacy_last_study_date`,
+                `${USER_UID}_chinese_literacy_last_handled_reset_at`
+            ];
+            prefixedKeys.forEach(key => localStorage.removeItem(key));
+
+            // 兼容历史无前缀 key
             localStorage.removeItem('chinese_literacy_progress');
             localStorage.removeItem('chinese_literacy_settings');
             localStorage.removeItem('chinese_literacy_achievements');
